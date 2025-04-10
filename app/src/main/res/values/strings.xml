@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">PrismFit Health App</string>
+    <string name="home_screen">Home</string>
+    <string name="activity_main_screen">Activity</string>
+    <string name="pending_activity_screen"></string>
+    <string name="diet_screen">Diet</string>
+    <string name="add_diet_screen">Add a meal</string>
+    <string name="notes_screen">Notes</string>
+    <string name="add_note_screen">Add a note</string>
+    <string name="profile_screen">Profile</string>
+    <string name="settings_screen">Settings</string>
+    <string name="go_back">Go back</string>
 </resources>
