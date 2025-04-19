@@ -1,4 +1,4 @@
-package com.example.prismfit.ui.theme
+package com.example.prismfit.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily

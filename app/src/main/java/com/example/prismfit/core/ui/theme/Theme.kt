@@ -1,4 +1,4 @@
-package com.example.prismfit.ui.theme
+package com.example.prismfit.core.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

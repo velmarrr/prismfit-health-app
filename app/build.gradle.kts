@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -51,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,4 +65,16 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.okhttp)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.hilt)
+    implementation(libs.hilt.compose)
+    ksp(libs.hilt.compiler)
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
 }

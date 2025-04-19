@@ -50,6 +50,18 @@ data object SettingsGraph {
     data object SettingsRoute
 }
 
+@Serializable
+data object RegisterGraph {
+    @Serializable
+    data object RegisterRoute
+}
+
+@Serializable
+data object LoginGraph {
+    @Serializable
+    data object LoginRoute
+}
+
 fun NavBackStackEntry?.routeClass(): KClass<*>? {
     return this?.destination.routeClass()
 }
