@@ -28,8 +28,8 @@ class AuthInterceptor @Inject constructor(
 
         if (response.code == 401) {
             response.close()
-
             val refreshed = runBlocking { authRepository.get().refresh() }
+
             if (refreshed) {
                 accessToken = runBlocking { tokenStorage.accessTokenFlow.firstOrNull() }
                 val retryRequest = originalRequest.newBuilder()

@@ -8,7 +8,10 @@ import com.example.prismfit.auth.data.model.RefreshRequest
 import com.example.prismfit.auth.data.remote.AuthApi
 import com.example.prismfit.core.session.TokenStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,6 +22,8 @@ class AuthRepository @Inject constructor(
     private val tokenStorage: TokenStorage,
     @ApplicationContext private val context: Context
 ) {
+    private val mutex = Mutex()
+    private var refreshInProgress: CompletableDeferred<Boolean>? = null
 
     suspend fun register(
         email: String,
@@ -90,16 +95,49 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun refresh(): Boolean {
-        val refreshToken = tokenStorage.refreshTokenFlow.firstOrNull() ?: return false
-        val res = api.refresh(RefreshRequest(refreshToken))
-        return if (res.isSuccessful) {
-            res.body()?.let {
-                tokenStorage.saveTokens(it.accessToken, it.refreshToken)
-                true
-            } ?: false
-        } else {
-            logout()
-            false
+        mutex.lock()
+        try {
+            refreshInProgress?.let {
+                mutex.unlock()
+                return it.await()
+            }
+
+            val deferred = CompletableDeferred<Boolean>()
+            refreshInProgress = deferred
+            mutex.unlock()
+
+            val refreshToken = tokenStorage.refreshTokenFlow.firstOrNull()
+            if (refreshToken == null) {
+                deferred.complete(false)
+                refreshInProgress = null
+                return false
+            }
+
+            return try {
+                val res = api.refresh(RefreshRequest(refreshToken))
+                if (res.isSuccessful) {
+                    res.body()?.let {
+                        tokenStorage.saveTokens(it.accessToken, it.refreshToken)
+                        deferred.complete(true)
+                        true
+                    } ?: run {
+                        deferred.complete(false)
+                        false
+                    }
+                } else {
+                    logout()
+                    deferred.complete(false)
+                    false
+                }
+            } catch (e: Exception) {
+                logout()
+                deferred.complete(false)
+                false
+            }
+        } finally {
+            mutex.withLock {
+                refreshInProgress = null
+            }
         }
     }
 
