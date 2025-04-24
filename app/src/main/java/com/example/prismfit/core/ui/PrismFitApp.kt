@@ -57,11 +57,12 @@ import com.example.prismfit.navigation.RegisterGraph.RegisterRoute
 import com.example.prismfit.navigation.SettingsGraph
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
 import com.example.prismfit.navigation.routeClass
-import com.example.prismfit.notes.presentation.AddNoteScreen
-import com.example.prismfit.notes.presentation.NotesScreen
+import com.example.prismfit.notes.presentation.add_note.AddNoteScreen
+import com.example.prismfit.notes.presentation.notes_list.NotesScreen
 import com.example.prismfit.profile.presentation.ProfileScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.navigation.NotesGraph.EditNoteRoute
 
 @Composable
 fun PrismFitApp() {
@@ -181,8 +182,13 @@ fun PrismFitAppContent(navController: NavHostController) {
                     composable<AddDietRoute> { AddDietScreen() }
                 }
                 navigation<NotesGraph>(startDestination = NotesRoute) {
-                    composable<NotesRoute> { NotesScreen() }
-                    composable<AddNoteRoute> { AddNoteScreen() }
+                    composable<NotesRoute> { NotesScreen(
+                        onNoteClick = { noteId ->
+                            navController.navigate(EditNoteRoute(noteId))
+                        }
+                    ) }
+                    composable<AddNoteRoute> { AddNoteScreen(noteId = null) }
+                    composable<EditNoteRoute> { AddNoteScreen(noteId = it.arguments?.getString("noteId")) }
                 }
                 navigation<ProfileGraph>(startDestination = ProfileRoute) {
                     composable<ProfileRoute> { ProfileScreen(navController) }

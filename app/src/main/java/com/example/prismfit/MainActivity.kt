@@ -1,15 +1,19 @@
 package com.example.prismfit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.core.session.SessionManager
 import com.example.prismfit.core.session.TokenStorage
 import com.example.prismfit.core.ui.PrismFitApp
 import com.example.prismfit.core.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint

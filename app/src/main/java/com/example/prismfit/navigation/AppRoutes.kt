@@ -36,6 +36,9 @@ data object NotesGraph {
 
     @Serializable
     data object AddNoteRoute
+
+    @Serializable
+    data class EditNoteRoute(val noteId: String)
 }
 
 @Serializable
