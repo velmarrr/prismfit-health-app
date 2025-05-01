@@ -2,6 +2,7 @@ package com.example.prismfit.core.di
 
 import com.example.prismfit.auth.data.remote.AuthApi
 import com.example.prismfit.auth.data.remote.AuthInterceptor
+import com.example.prismfit.diet.data.remote.DietApi
 import com.example.prismfit.notes.data.remote.NoteApi
 import dagger.Module
 import dagger.Provides
@@ -24,8 +25,15 @@ object NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun provideNoteApi(retrofit: Retrofit): NoteApi {
         return retrofit.create(NoteApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDietApi(retrofit: Retrofit): DietApi {
+        return retrofit.create(DietApi::class.java)
     }
 
     @Provides
