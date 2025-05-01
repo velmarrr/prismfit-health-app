@@ -27,6 +27,9 @@ data object DietGraph {
 
     @Serializable
     data object AddDietRoute
+
+    @Serializable
+    data class EditDietRoute(val mealId: String)
 }
 
 @Serializable

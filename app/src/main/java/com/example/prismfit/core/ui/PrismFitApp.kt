@@ -34,8 +34,8 @@ import com.example.prismfit.activity.presentation.PendingActivityScreen
 import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.auth.presentation.login.LoginScreen
 import com.example.prismfit.auth.presentation.registration.RegistrationScreen
-import com.example.prismfit.diet.presentation.AddDietScreen
-import com.example.prismfit.diet.presentation.DietScreen
+import com.example.prismfit.diet.presentation.add_diet.AddDietScreen
+import com.example.prismfit.diet.presentation.diet_main.DietScreen
 import com.example.prismfit.home.presentation.HomeScreen
 import com.example.prismfit.navigation.ActivityGraph
 import com.example.prismfit.navigation.ActivityGraph.ActivityMainRoute
@@ -62,6 +62,7 @@ import com.example.prismfit.notes.presentation.notes_list.NotesScreen
 import com.example.prismfit.profile.presentation.ProfileScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.navigation.DietGraph.EditDietRoute
 import com.example.prismfit.navigation.NotesGraph.EditNoteRoute
 
 @Composable
@@ -178,8 +179,13 @@ fun PrismFitAppContent(navController: NavHostController) {
                     composable<PendingActivityRoute> { PendingActivityScreen() }
                 }
                 navigation<DietGraph>(startDestination = DietRoute) {
-                    composable<DietRoute> { DietScreen() }
-                    composable<AddDietRoute> { AddDietScreen() }
+                    composable<DietRoute> { DietScreen(
+                        onMealClick = { mealId ->
+                            navController.navigate(EditDietRoute(mealId))
+                        }
+                    ) }
+                    composable<AddDietRoute> { AddDietScreen(mealId = null) }
+                    composable<EditDietRoute> { AddDietScreen(mealId = it.arguments?.getString("mealId")) }
                 }
                 navigation<NotesGraph>(startDestination = NotesRoute) {
                     composable<NotesRoute> { NotesScreen(

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,14 +25,19 @@ class NotesViewModel @Inject constructor(
     private val _noteToDelete = MutableStateFlow<String?>(null)
     val noteToDelete: StateFlow<String?> = _noteToDelete
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     init {
         getNotes()
     }
 
     fun getNotes() {
         viewModelScope.launch {
+            _isLoading.value = true
             _notesFlow.value = noteRepository.getNotes()
                 .sortedByDescending { it.createdAt }
+            _isLoading.value = false
         }
     }
 
