@@ -1,5 +1,6 @@
 package com.example.prismfit.core.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.prismfit.R
-import com.example.prismfit.activity.presentation.ActivityMainScreen
-import com.example.prismfit.activity.presentation.PendingActivityScreen
+import com.example.prismfit.activity.data.model.SerializableLatLng
+import com.example.prismfit.activity.data.model.toLatLng
+import com.example.prismfit.activity.presentation.activity_main.ActivityMainScreen
+import com.example.prismfit.activity.presentation.activity_map.ActivityMapScreen
+import com.example.prismfit.activity.presentation.activity_pending.PendingActivityScreen
+import com.example.prismfit.activity.service.LocationService
+import com.example.prismfit.activity.service.ServiceActions
 import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.auth.presentation.login.LoginScreen
 import com.example.prismfit.auth.presentation.registration.RegistrationScreen
@@ -62,8 +69,12 @@ import com.example.prismfit.notes.presentation.notes_list.NotesScreen
 import com.example.prismfit.profile.presentation.ProfileScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.navigation.ActivityGraph.ActivityMapRoute
 import com.example.prismfit.navigation.DietGraph.EditDietRoute
 import com.example.prismfit.navigation.NotesGraph.EditNoteRoute
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun PrismFitApp() {
@@ -91,13 +102,23 @@ fun PrismFitAppContent(navController: NavHostController) {
     val titleRes = when (currentBackStackEntry.routeClass()) {
         HomeRoute::class -> R.string.home_screen
         ActivityMainRoute::class -> R.string.activity_main_screen
-        PendingActivityRoute::class -> R.string.pending_activity_screen
+        PendingActivityRoute::class -> {
+            when (currentBackStackEntry?.arguments?.getString("selectedType")?.lowercase()) {
+                stringResource(R.string.walking_lowercase) -> R.string.pending_activity_screen_walking
+                stringResource(R.string.running_lowercase) -> R.string.pending_activity_screen_running
+                stringResource(R.string.cycling_lowercase) -> R.string.pending_activity_screen_cycling
+                else -> R.string.activity_main_screen
+            }
+        }
         DietRoute::class -> R.string.diet_screen
         AddDietRoute::class -> R.string.add_diet_screen
         NotesRoute::class -> R.string.notes_screen
         AddNoteRoute::class -> R.string.add_note_screen
         ProfileRoute::class -> R.string.profile_screen
         SettingsRoute::class -> R.string.settings_screen
+        EditNoteRoute::class -> R.string.edit_note_screen
+        EditDietRoute::class -> R.string.edit_diet_screen
+        ActivityMapRoute::class -> R.string.activity_map_screen
         else -> R.string.app_name
     }
     Scaffold(
@@ -175,8 +196,40 @@ fun PrismFitAppContent(navController: NavHostController) {
                     composable<HomeRoute> { HomeScreen() }
                 }
                 navigation<ActivityGraph>(startDestination = ActivityMainRoute) {
-                    composable<ActivityMainRoute> { ActivityMainScreen() }
-                    composable<PendingActivityRoute> { PendingActivityScreen() }
+                    composable<ActivityMainRoute> {
+                        ActivityMainScreen(
+                            onStartClick = { selectedType ->
+                                navController.navigate(PendingActivityRoute(selectedType))
+                            },
+                            onActivityClick = { activity ->
+                                val routeJson = Json.encodeToString(activity.route.map { it })
+                                navController.navigate(ActivityMapRoute(routeJson))
+                            }
+                        )
+                    }
+                    composable<PendingActivityRoute> { backStackEntry ->
+                        val selectedType = backStackEntry.arguments?.getString("selectedType")
+                            ?: stringResource(R.string.walking)
+                        val context = LocalContext.current
+                        PendingActivityScreen(
+                            onFinish = {
+                                val stopIntent = Intent(context, LocationService::class.java).apply {
+                                    action = ServiceActions.ACTION_STOP.name
+                                }
+                                context.stopService(stopIntent)
+                                navController.popBackStack()
+                            },
+                            selectedType = selectedType
+                        )
+                    }
+                    composable<ActivityMapRoute> { backStackEntry ->
+                        val routeJson = backStackEntry.arguments?.getString("routeJson") ?: "[]"
+                        val points: List<LatLng> = Json.decodeFromString<List<SerializableLatLng>>(routeJson)
+                            .map { it.toLatLng() }
+                        ActivityMapScreen(
+                            route = points
+                        )
+                    }
                 }
                 navigation<DietGraph>(startDestination = DietRoute) {
                     composable<DietRoute> { DietScreen(

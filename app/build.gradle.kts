@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.prismfit"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.lifecycle.service)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,6 +70,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -76,5 +78,9 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.hilt.compose)
     ksp(libs.hilt.compiler)
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
+    implementation(libs.maps.compose)
 }

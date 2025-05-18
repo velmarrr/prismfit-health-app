@@ -17,7 +17,10 @@ data object ActivityGraph {
     data object ActivityMainRoute
 
     @Serializable
-    data object PendingActivityRoute
+    data class PendingActivityRoute(val selectedType: String)
+
+    @Serializable
+    data class ActivityMapRoute(val routeJson: String)
 }
 
 @Serializable

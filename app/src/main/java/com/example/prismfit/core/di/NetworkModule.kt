@@ -1,9 +1,12 @@
 package com.example.prismfit.core.di
 
+import com.example.prismfit.activity.data.remote.ActivityApi
 import com.example.prismfit.auth.data.remote.AuthApi
 import com.example.prismfit.auth.data.remote.AuthInterceptor
 import com.example.prismfit.diet.data.remote.DietApi
 import com.example.prismfit.notes.data.remote.NoteApi
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -38,6 +42,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideActivityApi(retrofit: Retrofit): ActivityApi {
+        return retrofit.create(ActivityApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .registerTypeAdapter(Instant::class.java, InstantAdapter())
+            .create()
+    }
+
+    @Provides
+    @Singleton
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
@@ -48,11 +66,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080")
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 }
