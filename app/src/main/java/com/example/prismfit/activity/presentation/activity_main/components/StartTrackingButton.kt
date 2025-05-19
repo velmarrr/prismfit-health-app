@@ -1,4 +1,4 @@
-package com.example.prismfit.activity.presentation.activity_main
+package com.example.prismfit.activity.presentation.activity_main.components
 
 import android.Manifest
 import android.widget.Toast
@@ -55,9 +55,9 @@ fun StartTrackingButton(
         modifier = modifier
     ) {
         val startText = when (selectedType) {
-            stringResource(R.string.walking) -> stringResource(R.string.start_walking)
-            stringResource(R.string.running) -> stringResource(R.string.start_running)
-            stringResource(R.string.cycling) -> stringResource(R.string.start_cycling)
+            "walking" -> stringResource(R.string.start_walking)
+            "running" -> stringResource(R.string.start_running)
+            "cycling" -> stringResource(R.string.start_cycling)
             else -> stringResource(R.string.start) + " $selectedType"
         }
         Text(startText, fontSize = 16.sp)

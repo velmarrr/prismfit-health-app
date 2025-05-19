@@ -1,4 +1,4 @@
-package com.example.prismfit.activity.presentation.activity_main
+package com.example.prismfit.activity.presentation.activity_main.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,8 +44,13 @@ fun ActivityItem(
                 .clickable { onClick(activity) }
                 .padding(12.dp)
         ) {
+            val typeLabel = when (activity.type) {
+                "walking" -> stringResource(R.string.walking)
+                "running" -> stringResource(R.string.running)
+                else -> stringResource(R.string.cycling)
+            }
             Text(
-                text = activity.type,
+                text = typeLabel,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 10.dp)
             )
