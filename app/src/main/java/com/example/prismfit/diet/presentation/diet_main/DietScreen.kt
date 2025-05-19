@@ -215,8 +215,15 @@ fun DietContent(
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {
+                                val displayMealType = when (meal.type) {
+                                    "breakfast" -> stringResource(R.string.breakfast)
+                                    "lunch" -> stringResource(R.string.lunch)
+                                    "dinner" -> stringResource(R.string.dinner)
+                                    "snack" -> stringResource(R.string.snack)
+                                    else -> meal.type
+                                }
                                 Text(
-                                    text = meal.type,
+                                    text = displayMealType,
                                     style = MaterialTheme.typography.titleLarge,
                                     fontSize = 20.sp
                                 )
