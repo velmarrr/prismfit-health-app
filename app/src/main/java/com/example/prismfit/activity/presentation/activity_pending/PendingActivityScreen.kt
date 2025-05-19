@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -223,7 +223,7 @@ fun PendingActivityContent(
                     Button(
                         onClick = onStartTracking,
                         shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier.height(80.dp).widthIn(min = 80.dp)
                     ) {
                         Text(stringResource(R.string.start))
                     }
@@ -231,7 +231,7 @@ fun PendingActivityContent(
                     Button(
                         onClick = { onStopTracking(selectedType, onFinish) },
                         shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.size(80.dp)
+                        modifier = Modifier.height(80.dp).widthIn(min = 80.dp)
                     ) {
                         Text(stringResource(R.string.stop))
                     }
