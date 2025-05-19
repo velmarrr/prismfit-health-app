@@ -104,9 +104,9 @@ fun PrismFitAppContent(navController: NavHostController) {
         ActivityMainRoute::class -> R.string.activity_main_screen
         PendingActivityRoute::class -> {
             when (currentBackStackEntry?.arguments?.getString("selectedType")?.lowercase()) {
-                stringResource(R.string.walking_lowercase) -> R.string.pending_activity_screen_walking
-                stringResource(R.string.running_lowercase) -> R.string.pending_activity_screen_running
-                stringResource(R.string.cycling_lowercase) -> R.string.pending_activity_screen_cycling
+                "walking" -> R.string.pending_activity_screen_walking
+                "running" -> R.string.pending_activity_screen_running
+                "cycling" -> R.string.pending_activity_screen_cycling
                 else -> R.string.activity_main_screen
             }
         }
@@ -209,7 +209,7 @@ fun PrismFitAppContent(navController: NavHostController) {
                     }
                     composable<PendingActivityRoute> { backStackEntry ->
                         val selectedType = backStackEntry.arguments?.getString("selectedType")
-                            ?: stringResource(R.string.walking)
+                            ?: "walking"
                         val context = LocalContext.current
                         PendingActivityScreen(
                             onFinish = {

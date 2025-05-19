@@ -41,7 +41,7 @@
     <string name="password_digit_requirement">Password must contain at least 1 digit</string>
     <string name="password_upper_case_letter_requirement">Password must contain at least 1 upper case letter</string>
     <string name="password_lower_case_letter_requirement">Password must contain at least 1 lower case letter</string>
-    <string name="nickname_length_requirement">Nickname must be 3–20 characters long.</string>
+    <string name="nickname_length_requirement">Nickname must be 3–20 characters long</string>
     <string name="minimum_age_requirement">You must be at least 12 years old to continue</string>
     <string name="date_of_birth_selection_requirement">Please select your date of birth</string>
     <string name="logout">Logout</string>
@@ -109,4 +109,7 @@
     <string name="start_walking">Start Walking</string>
     <string name="start_running">Start Running</string>
     <string name="start_cycling">Start Cycling</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="ukrainian">Ukrainian</string>
 </resources>

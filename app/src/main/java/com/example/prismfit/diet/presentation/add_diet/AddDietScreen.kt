@@ -110,17 +110,25 @@ fun AddDietContent(
             .padding(16.dp)
     ) {
         var expanded by remember { mutableStateOf(false) }
-        val mealTypes = listOf(stringResource(R.string.breakfast),
-            stringResource(R.string.lunch), stringResource(R.string.dinner),
-            stringResource(R.string.snack)
+        val mealTypes = listOf("breakfast", "lunch", "dinner", "snack")
+        val mealTypeToStringRes = mapOf(
+            "breakfast" to R.string.breakfast,
+            "lunch" to R.string.lunch,
+            "dinner" to R.string.dinner,
+            "snack" to R.string.snack
         )
+        val displayMealType = if (mealTypes.contains(state.mealType)) {
+            mealTypeToStringRes[state.mealType]?.let { stringResource(it) } ?: state.mealType
+        } else {
+            state.mealType
+        }
 
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
         ) {
             TextField(
-                value = state.mealType,
+                value = displayMealType,
                 onValueChange = onMealTypeChange,
                 label = { Text(stringResource(R.string.meal_type)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -136,11 +144,11 @@ fun AddDietContent(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                mealTypes.forEach { meal ->
+                mealTypes.forEach { mealTypeKey ->
                     DropdownMenuItem(
-                        text = { Text(meal) },
+                        text = { Text(stringResource(mealTypeToStringRes[mealTypeKey]!!)) },
                         onClick = {
-                            onMealTypeChange(meal)
+                            onMealTypeChange(mealTypeKey)
                             expanded = false
                         }
                     )

@@ -31,6 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.prismfit.R
 import com.example.prismfit.activity.data.model.Activity
+import com.example.prismfit.activity.presentation.activity_main.components.ActivityItem
+import com.example.prismfit.activity.presentation.activity_main.components.StartTrackingButton
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 
@@ -40,11 +42,7 @@ fun ActivityMainScreen(
     onActivityClick: (Activity) -> Unit
 ) {
     val viewModel: ActivityMainViewModel = hiltViewModel()
-    val types = listOf(
-        stringResource(R.string.walking),
-        stringResource(R.string.running),
-        stringResource(R.string.cycling)
-    )
+    val types = listOf("walking", "running", "cycling")
     val pagerState = rememberPagerState(
         pageCount = { types.size }
     )
@@ -102,15 +100,21 @@ fun ActivityMainContent(
             ) {
                 Icon(
                     imageVector = when (types[page]) {
-                        stringResource(R.string.walking) -> Icons.Default.DirectionsWalk
-                        stringResource(R.string.running) -> Icons.Default.DirectionsRun
+                        "walking" -> Icons.Default.DirectionsWalk
+                        "running" -> Icons.Default.DirectionsRun
                         else -> Icons.Default.DirectionsBike
                     },
                     contentDescription = null,
                     modifier = Modifier.size(64.dp)
                 )
+                val typeLabel = when (types[page]) {
+                    "walking" -> stringResource(R.string.walking)
+                    "running" -> stringResource(R.string.running)
+                    "cycling" -> stringResource(R.string.cycling)
+                    else -> types[page]
+                }
                 Text(
-                    text = types[page],
+                    text = typeLabel,
                     style = MaterialTheme.typography.titleLarge
                 )
             }

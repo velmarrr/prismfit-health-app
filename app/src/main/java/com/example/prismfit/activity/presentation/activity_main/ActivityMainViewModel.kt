@@ -1,13 +1,10 @@
 package com.example.prismfit.activity.presentation.activity_main
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prismfit.R
 import com.example.prismfit.activity.data.model.Activity
 import com.example.prismfit.activity.data.repository.ActivityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,14 +15,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ActivityMainViewModel @Inject constructor(
-    private val activityRepository: ActivityRepository,
-    @ApplicationContext private val context: Context
+    private val activityRepository: ActivityRepository
 ) : ViewModel() {
 
     private val _activities = MutableStateFlow<List<Activity>>(emptyList())
     val activities: StateFlow<List<Activity>> = _activities
 
-    private val selectedType = MutableStateFlow(context.getString(R.string.walking))
+    private val selectedType = MutableStateFlow("walking")
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
