@@ -1,4 +1,4 @@
-package com.example.prismfit.ui.theme
+package com.example.prismfit.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF4C662B)
