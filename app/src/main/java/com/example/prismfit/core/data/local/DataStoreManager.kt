@@ -8,7 +8,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.prismfit.core.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
 
@@ -27,6 +29,18 @@ class DataStoreManager(private val context: Context) {
             .map { preferences ->
                 preferences[preferredLanguageKey] ?: ""
             }
+    }
+
+    suspend fun ensurePreferredLanguageInitialized() {
+        val current = context.dataStore.data.first()[preferredLanguageKey]
+        if (current.isNullOrEmpty()) {
+            val systemLang = getSystemLocale().language
+            savePreferredLanguage(systemLang)
+        }
+    }
+
+    private fun getSystemLocale(): Locale {
+        return context.resources.configuration.locales.get(0) ?: Locale.getDefault()
     }
 
     suspend fun saveThemePreference(theme: ThemePreference) {

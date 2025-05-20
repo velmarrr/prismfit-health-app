@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.example.prismfit.core.data.local.DataStoreManager
 import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.core.session.SessionManager
@@ -26,7 +25,6 @@ import com.example.prismfit.core.ui.theme.AppTheme
 import com.example.prismfit.core.ui.theme.ThemePreference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import java.util.Locale
@@ -40,25 +38,21 @@ class MainActivity : ComponentActivity() {
     lateinit var tokenStorage: TokenStorage
 
     override fun attachBaseContext(newBase: Context) {
-        val langCode = getPersistedLanguage(newBase)
+        val dataStoreManager = DataStoreManager(newBase)
+        val langCode = runBlocking {
+            dataStoreManager.ensurePreferredLanguageInitialized()
+            dataStoreManager.getPreferredLanguage().firstOrNull() ?: Locale.getDefault().language
+        }
         val locale = Locale(langCode)
         Locale.setDefault(locale)
         val configuration = Configuration(newBase.resources.configuration)
         configuration.setLocale(locale)
-        val updatedContext: Context = newBase.createConfigurationContext(configuration)
+        val updatedContext = newBase.createConfigurationContext(configuration)
         super.attachBaseContext(updatedContext)
-    }
-
-    private fun getPersistedLanguage(context: Context): String {
-        val dataStoreManager = DataStoreManager(context)
-        return runBlocking {
-            dataStoreManager.getPreferredLanguage().firstOrNull() ?: Locale.getDefault().language
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        applyPersistedLocale(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
@@ -89,21 +83,6 @@ class MainActivity : ComponentActivity() {
                         PrismFitApp()
                     }
                 }
-            }
-        }
-    }
-
-    private fun applyPersistedLocale(context: Context) {
-        lifecycleScope.launch {
-            val dataStoreManager = DataStoreManager(context)
-            val preferredLanguage = dataStoreManager.getPreferredLanguage().firstOrNull()
-            preferredLanguage?.let {
-                val locale = Locale(it)
-                Locale.setDefault(locale)
-                val resources = context.resources
-                val config = Configuration(resources.configuration)
-                config.setLocale(locale)
-                resources.updateConfiguration(config, resources.displayMetrics)
             }
         }
     }

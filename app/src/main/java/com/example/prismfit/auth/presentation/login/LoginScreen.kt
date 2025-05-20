@@ -178,7 +178,9 @@ fun LoginContent(
         TextButton(
             onClick = navigateToRegister
         ) {
-            Row {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = stringResource(R.string.dont_have_an_account),
                     fontSize = 16.sp,
