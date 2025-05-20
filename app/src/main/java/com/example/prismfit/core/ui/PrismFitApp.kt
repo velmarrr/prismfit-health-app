@@ -69,6 +69,7 @@ import com.example.prismfit.notes.presentation.notes_list.NotesScreen
 import com.example.prismfit.profile.presentation.ProfileScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 import com.example.prismfit.navigation.ActivityGraph.ActivityMapRoute
 import com.example.prismfit.navigation.DietGraph.EditDietRoute
 import com.example.prismfit.navigation.NotesGraph.EditNoteRoute
@@ -263,7 +264,7 @@ fun PrismFitAppContent(navController: NavHostController) {
 @Preview(showSystemUi = true)
 @Composable
 fun AppPreview() {
-    AppTheme {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
         PrismFitAppContent(rememberNavController())
     }
 }

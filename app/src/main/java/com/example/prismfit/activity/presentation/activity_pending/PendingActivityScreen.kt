@@ -36,6 +36,7 @@ import com.example.prismfit.activity.presentation.utils.toFormattedTime
 import com.example.prismfit.activity.service.LocationService
 import com.example.prismfit.activity.service.ServiceActions
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -244,7 +245,7 @@ fun PendingActivityContent(
 @Preview(showSystemUi = true)
 @Composable
 private fun PendingActivityPreview() {
-    AppTheme {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
         PendingActivityContent(
             path = listOf(),
             time = 2002,

@@ -24,6 +24,7 @@ import com.example.prismfit.core.session.SessionManager
 import com.example.prismfit.navigation.LoginGraph.LoginRoute
 import com.example.prismfit.navigation.ProfileGraph.ProfileRoute
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 
 @Composable
 fun ProfileScreen(
@@ -67,7 +68,7 @@ fun ProfileContent(onLogoutClick: () -> Unit) {
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePreview() {
-    AppTheme {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
         ProfileContent(
             onLogoutClick = {}
         )

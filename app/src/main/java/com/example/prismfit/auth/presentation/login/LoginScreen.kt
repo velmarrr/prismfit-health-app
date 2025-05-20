@@ -46,6 +46,7 @@ import com.example.prismfit.navigation.HomeGraph.HomeRoute
 import com.example.prismfit.navigation.LoginGraph.LoginRoute
 import com.example.prismfit.navigation.RegisterGraph.RegisterRoute
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 
 @Composable
 fun LoginScreen(
@@ -196,7 +197,7 @@ fun LoginContent(
 @Preview(showSystemUi = true)
 @Composable
 fun LoginPreview() {
-    AppTheme {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
         LoginContent(
             email = "",
             password = "",

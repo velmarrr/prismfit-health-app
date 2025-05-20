@@ -25,6 +25,7 @@ import com.example.prismfit.R
 import com.example.prismfit.activity.data.model.Activity
 import com.example.prismfit.activity.presentation.utils.toFormattedTime
 import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 import java.time.Instant
 
 @Composable
@@ -90,7 +91,7 @@ fun ActivityItem(
 @Preview(showBackground = true)
 @Composable
 fun ActivityItemPreview() {
-    AppTheme {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
         ActivityItem(
             activity = Activity(
                 id = "1",

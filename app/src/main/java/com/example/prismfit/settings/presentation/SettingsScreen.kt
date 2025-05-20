@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.prismfit.R
+import com.example.prismfit.core.ui.theme.ThemePreference
+import com.example.prismfit.settings.presentation.components.ThemeSwitchItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,7 @@ fun SettingsScreen() {
     val viewModel: SettingsViewModel = hiltViewModel()
     val context = LocalContext.current
     val currentLanguage by viewModel.currentLanguage.collectAsStateWithLifecycle()
+    val theme by viewModel.themePreference.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     Column(
@@ -83,5 +86,28 @@ fun SettingsScreen() {
                 }
             )
         }
+        Spacer(modifier = Modifier.height(80.dp))
+        Text(stringResource(R.string.theme), style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(16.dp))
+        ThemeSwitchItem(
+            label = stringResource(R.string.light_theme),
+            currentTheme = theme,
+            switchTheme = ThemePreference.LIGHT,
+            onThemeSelected = { viewModel.onThemeChanged(it) }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ThemeSwitchItem(
+            label = stringResource(R.string.dark_theme),
+            currentTheme = theme,
+            switchTheme = ThemePreference.DARK,
+            onThemeSelected = { viewModel.onThemeChanged(it) }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ThemeSwitchItem(
+            label = stringResource(R.string.system_theme),
+            currentTheme = theme,
+            switchTheme = ThemePreference.SYSTEM,
+            onThemeSelected = { viewModel.onThemeChanged(it) }
+        )
     }
 }

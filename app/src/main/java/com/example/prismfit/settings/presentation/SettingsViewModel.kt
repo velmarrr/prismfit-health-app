@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.core.data.local.DataStoreManager
+import com.example.prismfit.core.ui.theme.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,9 @@ class SettingsViewModel @Inject constructor(
     private val _currentLanguage = MutableStateFlow(getCurrentLocale(appContext).language)
     val currentLanguage: StateFlow<String> = _currentLanguage
 
+    private val _themePreference = MutableStateFlow(ThemePreference.SYSTEM)
+    val themePreference: StateFlow<ThemePreference> = _themePreference
+
     init {
         viewModelScope.launch {
             dataStoreManager.getPreferredLanguage().collect { preferredLanguage ->
@@ -32,6 +36,11 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            dataStoreManager.getThemePreference().collect {
+                _themePreference.value = it
+            }
+        }
     }
 
     fun onLanguageChanged(languageCode: String) {
@@ -40,6 +49,12 @@ class SettingsViewModel @Inject constructor(
                 dataStoreManager.savePreferredLanguage(languageCode)
                 _currentLanguage.value = languageCode
             }
+        }
+    }
+
+    fun onThemeChanged(theme: ThemePreference) {
+        viewModelScope.launch {
+            dataStoreManager.saveThemePreference(theme)
         }
     }
 

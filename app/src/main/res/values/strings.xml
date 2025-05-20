@@ -112,4 +112,8 @@
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="ukrainian">Ukrainian</string>
+    <string name="theme">Theme</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="system_theme">System Default</string>
 </resources>
