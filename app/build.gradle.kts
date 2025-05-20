@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +9,14 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+val googleApiSecret: String = localProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: ""
 
 android {
     namespace = "com.example.prismfit"
@@ -39,6 +50,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    defaultConfig {
+        manifestPlaceholders["googleApiSecret"] = googleApiSecret
     }
 }
 

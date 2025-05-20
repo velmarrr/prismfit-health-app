@@ -40,7 +40,7 @@
             android:permission="android.permission.FOREGROUND_SERVICE"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD2UF0kNqjsc_2kSLTFsV8fDNTpnkrKbAg"/>
+            android:value="${googleApiSecret}"/>
     </application>
 
 </manifest>
