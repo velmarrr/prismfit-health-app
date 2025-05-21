@@ -58,15 +58,12 @@ import com.example.prismfit.navigation.MainTabs
 import com.example.prismfit.navigation.NotesGraph
 import com.example.prismfit.navigation.NotesGraph.AddNoteRoute
 import com.example.prismfit.navigation.NotesGraph.NotesRoute
-import com.example.prismfit.navigation.ProfileGraph
-import com.example.prismfit.navigation.ProfileGraph.ProfileRoute
 import com.example.prismfit.navigation.RegisterGraph.RegisterRoute
 import com.example.prismfit.navigation.SettingsGraph
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
 import com.example.prismfit.navigation.routeClass
 import com.example.prismfit.notes.presentation.add_note.AddNoteScreen
 import com.example.prismfit.notes.presentation.notes_list.NotesScreen
-import com.example.prismfit.profile.presentation.ProfileScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
 import com.example.prismfit.core.ui.theme.AppTheme
 import com.example.prismfit.core.ui.theme.ThemePreference
@@ -115,7 +112,6 @@ fun PrismFitAppContent(navController: NavHostController) {
         AddDietRoute::class -> R.string.add_diet_screen
         NotesRoute::class -> R.string.notes_screen
         AddNoteRoute::class -> R.string.add_note_screen
-        ProfileRoute::class -> R.string.profile_screen
         SettingsRoute::class -> R.string.settings_screen
         EditNoteRoute::class -> R.string.edit_note_screen
         EditDietRoute::class -> R.string.edit_diet_screen
@@ -174,8 +170,7 @@ fun PrismFitAppContent(navController: NavHostController) {
             }
         },
         bottomBar = {
-            if (currentBackStackEntry.routeClass() != ProfileRoute::class &&
-                currentBackStackEntry.routeClass() != SettingsRoute::class &&
+            if (currentBackStackEntry.routeClass() != SettingsRoute::class &&
                 currentBackStackEntry.routeClass() != LoginRoute::class &&
                 currentBackStackEntry.routeClass() != RegisterRoute::class
             ) {
@@ -249,9 +244,6 @@ fun PrismFitAppContent(navController: NavHostController) {
                     ) }
                     composable<AddNoteRoute> { AddNoteScreen(noteId = null) }
                     composable<EditNoteRoute> { AddNoteScreen(noteId = it.arguments?.getString("noteId")) }
-                }
-                navigation<ProfileGraph>(startDestination = ProfileRoute) {
-                    composable<ProfileRoute> { ProfileScreen(navController) }
                 }
                 navigation<SettingsGraph>(startDestination = SettingsRoute) {
                     composable<SettingsRoute> { SettingsScreen(navController) }

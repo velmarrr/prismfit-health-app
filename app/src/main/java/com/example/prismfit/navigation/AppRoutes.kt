@@ -48,12 +48,6 @@ data object NotesGraph {
 }
 
 @Serializable
-data object ProfileGraph {
-    @Serializable
-    data object ProfileRoute
-}
-
-@Serializable
 data object SettingsGraph {
     @Serializable
     data object SettingsRoute

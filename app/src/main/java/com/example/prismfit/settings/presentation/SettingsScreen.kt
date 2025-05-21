@@ -26,7 +26,7 @@ import com.example.prismfit.R
 import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.core.ui.theme.ThemePreference
 import com.example.prismfit.navigation.LoginGraph.LoginRoute
-import com.example.prismfit.navigation.ProfileGraph.ProfileRoute
+import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
 import com.example.prismfit.settings.presentation.components.SingleChoiceSegmentedButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ fun SettingsScreen(
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn) {
             navController.navigate(LoginRoute) {
-                popUpTo(ProfileRoute) { inclusive = true }
+                popUpTo(SettingsRoute) { inclusive = true }
             }
         }
     }

@@ -3,7 +3,6 @@ package com.example.prismfit.core.ui
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.prismfit.R
-import com.example.prismfit.navigation.ProfileGraph.ProfileRoute
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
 import com.example.prismfit.navigation.routeClass
 
@@ -60,17 +58,6 @@ fun AppToolbar(
             }
         },
         actions = {
-            if (currentBackStackEntry.routeClass() != ProfileRoute::class &&
-                currentBackStackEntry.routeClass() != SettingsRoute::class) {
-                IconButton(
-                    onClick = { navController.navigate(ProfileRoute) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = stringResource(R.string.profile_screen)
-                    )
-                }
-            }
             if (currentBackStackEntry.routeClass() != SettingsRoute::class) {
                 IconButton(
                     onClick = { navController.navigate(SettingsRoute) }
