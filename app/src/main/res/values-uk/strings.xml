@@ -115,5 +115,5 @@
     <string name="theme">Тема</string>
     <string name="light_theme">Світла</string>
     <string name="dark_theme">Темна</string>
-    <string name="system_theme">Системна за замовчуванням</string>
+    <string name="system_theme">Системна</string>
 </resources>
