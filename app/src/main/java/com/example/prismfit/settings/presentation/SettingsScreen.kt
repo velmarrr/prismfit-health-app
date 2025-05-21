@@ -4,32 +4,52 @@ import android.app.Activity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.prismfit.R
+import com.example.prismfit.core.session.LocalSessionManager
 import com.example.prismfit.core.ui.theme.ThemePreference
+import com.example.prismfit.navigation.LoginGraph.LoginRoute
+import com.example.prismfit.navigation.ProfileGraph.ProfileRoute
 import com.example.prismfit.settings.presentation.components.SingleChoiceSegmentedButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    navController: NavController
+) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val context = LocalContext.current
     val currentLanguage by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val theme by viewModel.themePreference.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val sessionManager = LocalSessionManager.current
+
+    val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
+    LaunchedEffect(isLoggedIn) {
+        if (!isLoggedIn) {
+            navController.navigate(LoginRoute) {
+                popUpTo(ProfileRoute) { inclusive = true }
+            }
+        }
+    }
 
     SettingsContent(
         currentLanguage = currentLanguage,
@@ -45,7 +65,8 @@ fun SettingsScreen() {
             }
         },
         theme = theme,
-        onThemeSelected = { viewModel.onThemeChanged(it) }
+        onThemeSelected = { viewModel.onThemeChanged(it) },
+        onLogoutClick = { viewModel.logout() }
     )
 }
 
@@ -54,7 +75,8 @@ fun SettingsContent(
     currentLanguage: String,
     onLanguageSelected: (String) -> Unit,
     theme: ThemePreference,
-    onThemeSelected: (ThemePreference) -> Unit
+    onThemeSelected: (ThemePreference) -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -90,5 +112,14 @@ fun SettingsContent(
                 }
             }
         )
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = onLogoutClick,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.logout))
+        }
     }
 }
