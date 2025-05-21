@@ -3,6 +3,7 @@ package com.example.prismfit.settings.presentation
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prismfit.auth.data.repository.AuthRepository
 import com.example.prismfit.core.data.local.DataStoreManager
 import com.example.prismfit.core.ui.theme.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -60,5 +62,11 @@ class SettingsViewModel @Inject constructor(
 
     private fun getCurrentLocale(context: Context): Locale {
         return context.resources.configuration.locales.get(0) ?: Locale.getDefault()
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            authRepository.logout()
+        }
     }
 }

@@ -254,7 +254,7 @@ fun PrismFitAppContent(navController: NavHostController) {
                     composable<ProfileRoute> { ProfileScreen(navController) }
                 }
                 navigation<SettingsGraph>(startDestination = SettingsRoute) {
-                    composable<SettingsRoute> { SettingsScreen() }
+                    composable<SettingsRoute> { SettingsScreen(navController) }
                 }
             }
         }
