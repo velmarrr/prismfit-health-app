@@ -31,6 +31,31 @@ fun SettingsScreen() {
     val theme by viewModel.themePreference.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
+    SettingsContent(
+        currentLanguage = currentLanguage,
+        onLanguageSelected = { selected ->
+            if (selected != currentLanguage) {
+                scope.launch {
+                    viewModel.onLanguageChanged(selected)
+                    delay(200)
+                    val intent = (context as Activity).intent
+                    context.finish()
+                    context.startActivity(intent)
+                }
+            }
+        },
+        theme = theme,
+        onThemeSelected = { viewModel.onThemeChanged(it) }
+    )
+}
+
+@Composable
+fun SettingsContent(
+    currentLanguage: String,
+    onLanguageSelected: (String) -> Unit,
+    theme: ThemePreference,
+    onThemeSelected: (ThemePreference) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,17 +66,7 @@ fun SettingsScreen() {
         SingleChoiceSegmentedButton(
             options = listOf("en", "uk"),
             selectedOption = currentLanguage,
-            onOptionSelected = { selected ->
-                if (selected != currentLanguage) {
-                    scope.launch {
-                        viewModel.onLanguageChanged(selected)
-                        delay(200)
-                        val intent = (context as Activity).intent
-                        context.finish()
-                        context.startActivity(intent)
-                    }
-                }
-            },
+            onOptionSelected = onLanguageSelected,
             labelMapper = { code ->
                 when (code) {
                     "en" -> stringResource(R.string.english)
@@ -66,7 +81,7 @@ fun SettingsScreen() {
         SingleChoiceSegmentedButton(
             options = ThemePreference.entries.toList(),
             selectedOption = theme,
-            onOptionSelected = { viewModel.onThemeChanged(it) },
+            onOptionSelected = onThemeSelected,
             labelMapper = {
                 when (it) {
                     ThemePreference.LIGHT -> stringResource(R.string.light_theme)
