@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,15 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
-
-val localProperties = Properties().apply {
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        load(FileInputStream(localPropertiesFile))
-    }
-}
-val googleApiSecret: String = localProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: ""
 
 android {
     namespace = "com.example.prismfit"
@@ -28,7 +18,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -51,8 +40,9 @@ android {
     buildFeatures {
         compose = true
     }
-    defaultConfig {
-        manifestPlaceholders["googleApiSecret"] = googleApiSecret
+    secrets {
+        propertiesFileName = "secrets.properties"
+        defaultPropertiesFileName = "local.defaults.properties"
     }
 }
 
@@ -70,13 +60,8 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.appcompat)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.nav.compose)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.collections.immutable)
