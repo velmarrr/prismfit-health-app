@@ -1,9 +1,9 @@
 package com.example.prismfit.diet.presentation.add_diet
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
+import com.example.prismfit.core.ui.utils.UiText
 import com.example.prismfit.diet.data.model.Dish
 import com.example.prismfit.diet.data.model.MealRequest
 import com.example.prismfit.diet.data.repository.DietRepository
@@ -14,7 +14,6 @@ import com.example.prismfit.diet.presentation.add_diet.DishInput.WEIGHT
 import com.example.prismfit.diet.presentation.add_diet.DishInput.FAT
 import com.example.prismfit.diet.presentation.add_diet.DishInput.CARBS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddDietViewModel @Inject constructor(
-    private val dietRepository: DietRepository,
-    @ApplicationContext private val context: Context
+    private val dietRepository: DietRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ScreenState())
@@ -98,9 +96,9 @@ class AddDietViewModel @Inject constructor(
                 )
             }
         } else if (state.dishName.isBlank()) {
-            _state.update { it.copy(errorMessage = context.getString(R.string.dish_name_requirement)) }
+            _state.update { it.copy(errorMessage = UiText.StringResource(R.string.dish_name_requirement)) }
         } else {
-            _state.update { it.copy(errorMessage = context.getString(R.string.dish_weight_requirement)) }
+            _state.update { it.copy(errorMessage = UiText.StringResource(R.string.dish_weight_requirement)) }
         }
     }
 
@@ -115,11 +113,11 @@ class AddDietViewModel @Inject constructor(
     fun save() {
         val mealType = _state.value.mealType.trim()
         if (mealType.isEmpty()) {
-            _state.update { it.copy(errorMessage = context.getString(R.string.meal_type_requirement)) }
+            _state.update { it.copy(errorMessage = UiText.StringResource(R.string.meal_type_requirement)) }
             return
         }
         if (_state.value.dishes.isEmpty()) {
-            _state.update { it.copy(errorMessage = context.getString(R.string.added_dishes_requirement)) }
+            _state.update { it.copy(errorMessage = UiText.StringResource(R.string.added_dishes_requirement)) }
             return
         }
 
@@ -153,7 +151,7 @@ class AddDietViewModel @Inject constructor(
         val mealType: String = "",
         val dishes: List<Dish> = emptyList(),
         val isSaving: Boolean = false,
-        val errorMessage: String? = null,
+        val errorMessage: UiText? = null,
         val dishName: String = "",
         val dishWeight: String = "",
         val dishCalories: String = "",
