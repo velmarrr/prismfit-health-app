@@ -7,14 +7,20 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.prismfit.core.ui.theme.ThemePreference
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
 
-class DataStoreManager(private val context: Context) {
+@Singleton
+class DataStoreManager @Inject constructor (
+    @ApplicationContext private val context: Context
+) {
     private val preferredLanguageKey = stringPreferencesKey("preferred_language")
     private val themePreferenceKey = stringPreferencesKey("theme_preference")
 
