@@ -37,8 +37,10 @@ import com.example.prismfit.notes.presentation.add_note.AddNoteViewModel.ScreenS
 @Composable
 fun AddNoteScreen(noteId: String?) {
 
-    val viewModel = hiltViewModel<AddNoteViewModel, AddNoteViewModel.Factory> { factory ->
-        factory.create(noteId)
+    val viewModel: AddNoteViewModel = hiltViewModel()
+
+    LaunchedEffect(noteId) {
+        viewModel.initWithId(noteId)
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()

@@ -6,9 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
 import com.example.prismfit.notes.data.model.NoteRequest
 import com.example.prismfit.notes.data.repository.NoteRepository
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
@@ -17,10 +14,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = AddNoteViewModel.Factory::class)
-class AddNoteViewModel @AssistedInject constructor(
-    @Assisted private val noteId: String?,
+@HiltViewModel
+class AddNoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -31,10 +28,14 @@ class AddNoteViewModel @AssistedInject constructor(
     private val _exitChannel = Channel<Unit>()
     val exitChannel: ReceiveChannel<Unit> = _exitChannel
 
-    init {
-        if (noteId != null) {
+    private var noteId: String? = null
+
+    fun initWithId(id: String?) {
+        if (id == noteId) return
+        noteId = id
+        if (id != null) {
             viewModelScope.launch {
-                val note = noteRepository.getNotes().find { it.id == noteId }
+                val note = noteRepository.getNotes().find { it.id == id }
                 note?.let {
                     _state.value = ScreenState(
                         inputTitle = it.title,
@@ -85,9 +86,4 @@ class AddNoteViewModel @AssistedInject constructor(
         val isSaving: Boolean = false,
         val errorMessage: String? = null
     )
-
-    @AssistedFactory
-    interface Factory {
-        fun create(notedId: String?): AddNoteViewModel
-    }
 }

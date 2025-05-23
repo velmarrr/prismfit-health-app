@@ -53,8 +53,10 @@ import com.example.prismfit.notes.presentation.EventConsumer
 @Composable
 fun AddDietScreen(mealId: String?) {
 
-    val viewModel = hiltViewModel<AddDietViewModel, Factory> { factory ->
-        factory.create(mealId)
+    val viewModel: AddDietViewModel = hiltViewModel()
+
+    LaunchedEffect(mealId) {
+        viewModel.initWithId(mealId)
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -95,7 +97,7 @@ fun AddDietScreen(mealId: String?) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddDietContent(
-    state: AddDietScreenUiState,
+    state: ScreenState,
     onMealTypeChange: (String) -> Unit,
     onDishInputChange: (DishInput, String) -> Unit,
     onAddDish: () -> Unit,

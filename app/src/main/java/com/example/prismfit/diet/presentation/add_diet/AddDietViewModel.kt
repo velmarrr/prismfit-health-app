@@ -13,9 +13,6 @@ import com.example.prismfit.diet.presentation.add_diet.DishInput.PROTEIN
 import com.example.prismfit.diet.presentation.add_diet.DishInput.WEIGHT
 import com.example.prismfit.diet.presentation.add_diet.DishInput.FAT
 import com.example.prismfit.diet.presentation.add_diet.DishInput.CARBS
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
@@ -25,26 +22,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = AddDietViewModel.Factory::class)
-class AddDietViewModel @AssistedInject constructor(
-    @Assisted private val mealId: String?,
+@HiltViewModel
+class AddDietViewModel @Inject constructor(
     private val dietRepository: DietRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(AddDietScreenUiState())
-    val state: StateFlow<AddDietScreenUiState> = _state
+    private val _state = MutableStateFlow(ScreenState())
+    val state: StateFlow<ScreenState> = _state
 
     private val _exitChannel = Channel<Unit>()
     val exitChannel: ReceiveChannel<Unit> = _exitChannel
 
-    init {
+    private var mealId: String? = null
+
+    fun initWithId(id: String?) {
+        if (id == mealId) return
+        mealId = id
         if (mealId != null) {
             viewModelScope.launch {
-                val meal = dietRepository.getAllMeals().find { it.id == mealId }
+                val meal =  dietRepository.getAllMeals().find { it.id == mealId }
                 meal?.let {
-                    _state.value = AddDietScreenUiState(
+                    _state.value = ScreenState(
                         mealType = it.type,
                         dishes = it.dishes,
                         date = it.date
@@ -148,7 +149,7 @@ class AddDietViewModel @AssistedInject constructor(
         }
     }
 
-    data class AddDietScreenUiState(
+    data class ScreenState (
         val mealType: String = "",
         val dishes: List<Dish> = emptyList(),
         val isSaving: Boolean = false,
@@ -161,9 +162,4 @@ class AddDietViewModel @AssistedInject constructor(
         val dishCarbs: String = "",
         val date: String? = null
     )
-
-    @AssistedFactory
-    interface Factory {
-        fun create(mealId: String?): AddDietViewModel
-    }
 }
