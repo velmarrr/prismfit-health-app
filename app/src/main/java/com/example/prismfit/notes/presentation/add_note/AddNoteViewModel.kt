@@ -1,13 +1,12 @@
 package com.example.prismfit.notes.presentation.add_note
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
+import com.example.prismfit.core.ui.utils.UiText
 import com.example.prismfit.notes.data.model.NoteRequest
 import com.example.prismfit.notes.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
-    private val noteRepository: NoteRepository,
-    @ApplicationContext private val context: Context
+    private val noteRepository: NoteRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ScreenState())
@@ -49,7 +47,9 @@ class AddNoteViewModel @Inject constructor(
     fun save() {
         val title = _state.value.inputTitle.trim()
         if (title.isEmpty()) {
-            _state.update { it.copy(errorMessage = context.getString(R.string.title_requirement)) }
+            _state.update {
+                it.copy(errorMessage = UiText.StringResource(R.string.title_requirement))
+            }
             return
         }
 
@@ -84,6 +84,6 @@ class AddNoteViewModel @Inject constructor(
         val inputTitle: String = "",
         val inputContent: String = "",
         val isSaving: Boolean = false,
-        val errorMessage: String? = null
+        val errorMessage: UiText? = null
     )
 }
