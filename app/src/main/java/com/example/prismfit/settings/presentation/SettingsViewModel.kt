@@ -8,8 +8,11 @@ import com.example.prismfit.core.data.local.DataStoreManager
 import com.example.prismfit.core.ui.theme.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -27,6 +30,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _themePreference = MutableStateFlow(ThemePreference.SYSTEM)
     val themePreference: StateFlow<ThemePreference> = _themePreference
+
+    private val _languageChanged = MutableSharedFlow<Unit>()
+    val languageChanged: SharedFlow<Unit> = _languageChanged.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -50,6 +56,7 @@ class SettingsViewModel @Inject constructor(
             if (_currentLanguage.value != languageCode) {
                 dataStoreManager.savePreferredLanguage(languageCode)
                 _currentLanguage.value = languageCode
+                _languageChanged.emit(Unit)
             }
         }
     }

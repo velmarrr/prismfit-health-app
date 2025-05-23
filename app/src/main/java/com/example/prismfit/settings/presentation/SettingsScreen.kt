@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,8 +27,6 @@ import com.example.prismfit.core.ui.theme.ThemePreference
 import com.example.prismfit.navigation.LoginGraph.LoginRoute
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
 import com.example.prismfit.settings.presentation.components.SingleChoiceSegmentedButton
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -39,7 +36,6 @@ fun SettingsScreen(
     val context = LocalContext.current
     val currentLanguage by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val theme by viewModel.themePreference.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
     val sessionManager = LocalSessionManager.current
 
     val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
@@ -50,18 +46,19 @@ fun SettingsScreen(
             }
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.languageChanged.collect {
+            val intent = (context as Activity).intent
+            context.finish()
+            context.startActivity(intent)
+        }
+    }
 
     SettingsContent(
         currentLanguage = currentLanguage,
         onLanguageSelected = { selected ->
             if (selected != currentLanguage) {
-                scope.launch {
-                    viewModel.onLanguageChanged(selected)
-                    delay(200)
-                    val intent = (context as Activity).intent
-                    context.finish()
-                    context.startActivity(intent)
-                }
+                viewModel.onLanguageChanged(selected)
             }
         },
         theme = theme,
