@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -71,6 +72,12 @@ fun RegistrationScreen(
     val dateOfBirthError by viewModel.dateOfBirthError.collectAsStateWithLifecycle(lifecycleOwner)
     val isSignupEnabled by viewModel.isSignupEnabled.collectAsStateWithLifecycle(lifecycleOwner)
     val registrationSuccess by viewModel.registrationSuccess.collectAsStateWithLifecycle(lifecycleOwner)
+    val context = LocalContext.current
+
+    val emailErrorText = emailError?.asString(context)
+    val passwordErrorText = passwordError?.asString(context)
+    val nicknameErrorText = nicknameError?.asString(context)
+    val dateOfBirthErrorText = dateOfBirthError?.asString(context)
 
     val navigateToLogin = { navController.navigate(LoginRoute) }
 
@@ -89,10 +96,10 @@ fun RegistrationScreen(
         isPasswordVisible = isPasswordVisible,
         nickname = nickname,
         dateOfBirth = formattedDateOfBirth,
-        emailError = emailError,
-        passwordError = passwordError,
-        nicknameError = nicknameError,
-        dateOfBirthError = dateOfBirthError,
+        emailError = emailErrorText,
+        passwordError = passwordErrorText,
+        nicknameError = nicknameErrorText,
+        dateOfBirthError = dateOfBirthErrorText,
         onEmailChange = viewModel::onEmailChanged,
         onPasswordChange = viewModel::onPasswordChanged,
         onNicknameChange = viewModel::onNicknameChanged,

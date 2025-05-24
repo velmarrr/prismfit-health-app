@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -29,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -63,6 +62,10 @@ fun LoginScreen(
     val passwordError by viewModel.passwordError.collectAsStateWithLifecycle(lifecycleOwner)
     val isLoginEnabled by viewModel.isLoginEnabled.collectAsStateWithLifecycle(lifecycleOwner)
     val loginSuccess by viewModel.loginSuccess.collectAsStateWithLifecycle(lifecycleOwner)
+    val context = LocalContext.current
+
+    val emailErrorText = emailError?.asString(context)
+    val passwordErrorText = passwordError?.asString(context)
 
     val navigateToRegister = { navController.navigate(RegisterRoute) }
 
@@ -79,8 +82,8 @@ fun LoginScreen(
         email = email,
         password = password,
         isPasswordVisible = isPasswordVisible,
-        emailError = emailError,
-        passwordError = passwordError,
+        emailError = emailErrorText,
+        passwordError = passwordErrorText,
         onEmailChange = viewModel::onEmailChanged,
         onPasswordChange = viewModel::onPasswordChanged,
         onPasswordVisibilityClick = viewModel::onPasswordVisibilityClicked,

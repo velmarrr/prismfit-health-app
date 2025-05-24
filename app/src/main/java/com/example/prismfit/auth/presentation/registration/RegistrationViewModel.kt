@@ -1,6 +1,5 @@
 package com.example.prismfit.auth.presentation.registration
 
-import android.content.Context
 import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,12 +19,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.prismfit.auth.data.model.AuthResult
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.example.prismfit.core.ui.utils.UiText
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -39,29 +37,32 @@ class RegistrationViewModel @Inject constructor(
     private val _nickname = MutableStateFlow("")
     val nickname: StateFlow<String> = _nickname
 
-    private val _dateOfBirthMs = MutableStateFlow<Long>(Calendar.getInstance().timeInMillis)
+    private val _dateOfBirthMs = MutableStateFlow(Calendar.getInstance().timeInMillis)
     val dateOfBirthMs: StateFlow<Long> = _dateOfBirthMs
 
     private val _formattedDateOfBirth = MutableStateFlow(formatDate(_dateOfBirthMs.value))
     val formattedDateOfBirth: StateFlow<String> = _formattedDateOfBirth
 
-    private val _emailError = MutableStateFlow<String?>(null)
-    val emailError: StateFlow<String?> = _emailError
+    private val _emailError = MutableStateFlow<UiText?>(null)
+    val emailError: StateFlow<UiText?> = _emailError
 
-    private val _passwordError = MutableStateFlow<String?>(null)
-    val passwordError: StateFlow<String?> = _passwordError
+    private val _passwordError = MutableStateFlow<UiText?>(null)
+    val passwordError: StateFlow<UiText?> = _passwordError
 
-    private val _nicknameError = MutableStateFlow<String?>(null)
-    val nicknameError: StateFlow<String?> = _nicknameError
+    private val _nicknameError = MutableStateFlow<UiText?>(null)
+    val nicknameError: StateFlow<UiText?> = _nicknameError
 
-    private val _dateOfBirthError = MutableStateFlow<String?>(null)
-    val dateOfBirthError: StateFlow<String?> = _dateOfBirthError
+    private val _dateOfBirthError = MutableStateFlow<UiText?>(null)
+    val dateOfBirthError: StateFlow<UiText?> = _dateOfBirthError
 
     private val _showDatePickerModal = MutableStateFlow(false)
     val showDatePickerModal: StateFlow<Boolean> = _showDatePickerModal
 
     private val _registrationSuccess = MutableStateFlow(false)
     val registrationSuccess: StateFlow<Boolean> = _registrationSuccess
+
+    private val isLoading = MutableStateFlow(false)
+    private val authResult = MutableStateFlow<AuthResult?>(null)
 
     val isSignupEnabled: StateFlow<Boolean> = combine(
         listOf(
@@ -79,10 +80,10 @@ class RegistrationViewModel @Inject constructor(
         val currentPassword = flows[1] as String
         val currentNickname = flows[2] as String
         val currentDateOfBirthMs = flows[3] as Long?
-        val currentEmailError = flows[4] as String?
-        val currentPasswordError = flows[5] as String?
-        val currentNicknameError = flows[6] as String?
-        val currentDateOfBirthError = flows[7] as String?
+        val currentEmailError = flows[4] as UiText?
+        val currentPasswordError = flows[5] as UiText?
+        val currentNicknameError = flows[6] as UiText?
+        val currentDateOfBirthError = flows[7] as UiText?
 
         currentEmail.isNotEmpty() &&
         currentPassword.isNotEmpty() &&
@@ -132,12 +133,6 @@ class RegistrationViewModel @Inject constructor(
         _showDatePickerModal.update { false }
     }
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _authResult = MutableStateFlow<AuthResult?>(null)
-    val authResult: StateFlow<AuthResult?> = _authResult
-
     fun onSignupButtonClicked() {
         _emailError.update { validateEmail(_email.value) }
         _passwordError.update { validatePassword(_password.value) }
@@ -147,7 +142,7 @@ class RegistrationViewModel @Inject constructor(
         if (_emailError.value == null && _passwordError.value == null &&
             _nicknameError.value == null && _dateOfBirthError.value == null) {
 
-            _isLoading.value = true
+            isLoading.value = true
             viewModelScope.launch {
                 try {
                     when (val result = authRepository.register(
@@ -157,22 +152,25 @@ class RegistrationViewModel @Inject constructor(
                         _dateOfBirthMs.value
                     )) {
                         is AuthResult.Success -> {
-                            _authResult.value = result
+                            authResult.value = result
                             _registrationSuccess.value = true
                         }
                         is AuthResult.Error -> {
                             if (result.field == AuthResult.Field.EMAIL) {
                                 _emailError.value = result.message
                             }
-                            _authResult.value = result
+                            authResult.value = result
                             _registrationSuccess.value = false
                         }
                     }
                 } catch (e: Exception) {
-                    _authResult.value = AuthResult.Error(context.getString(R.string.error_during_signing_up), field = AuthResult.Field.GENERAL)
+                    authResult.value = AuthResult.Error(
+                        UiText.StringResource(R.string.error_during_signing_up),
+                        field = AuthResult.Field.GENERAL
+                    )
                     _registrationSuccess.value = false
                 } finally {
-                    _isLoading.value = false
+                    isLoading.value = false
                 }
             }
         }
@@ -189,39 +187,39 @@ class RegistrationViewModel @Inject constructor(
         } ?: ""
     }
 
-    private fun validateEmail(email: String): String? {
+    private fun validateEmail(email: String): UiText? {
         val emailPattern = Pattern.compile(
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$"
         )
         return if (!emailPattern.matcher(email).matches()) {
-            context.getString(R.string.invalid_email_format)
+            UiText.StringResource(R.string.invalid_email_format)
         } else {
             null
         }
     }
 
-    private fun validatePassword(password: String): String? {
+    private fun validatePassword(password: String): UiText? {
         val hasDigit = password.any { it.isDigit() }
         val hasUpperCase = password.any { it.isUpperCase() }
         val hasLowerCase = password.any { it.isLowerCase() }
         return when {
-            password.length < 9 -> context.getString(R.string.password_length_requirement)
-            !hasDigit -> context.getString(R.string.password_digit_requirement)
-            !hasUpperCase -> context.getString(R.string.password_upper_case_letter_requirement)
-            !hasLowerCase -> context.getString(R.string.password_lower_case_letter_requirement)
+            password.length < 9 -> UiText.StringResource(R.string.password_length_requirement)
+            !hasDigit -> UiText.StringResource(R.string.password_digit_requirement)
+            !hasUpperCase -> UiText.StringResource(R.string.password_upper_case_letter_requirement)
+            !hasLowerCase -> UiText.StringResource(R.string.password_lower_case_letter_requirement)
             else -> null
         }
     }
 
-    private fun validateNickname(nickname: String): String? {
+    private fun validateNickname(nickname: String): UiText? {
         return if (nickname.length < 3 || nickname.length > 20) {
-            context.getString(R.string.nickname_length_requirement)
+            UiText.StringResource(R.string.nickname_length_requirement)
         } else {
             null
         }
     }
 
-    private fun validateDateOfBirth(selectedDateMs: Long?): String? {
+    private fun validateDateOfBirth(selectedDateMs: Long?): UiText? {
         selectedDateMs?.let {
             val currentDate = Calendar.getInstance()
             val birthDate = Calendar.getInstance()
@@ -229,11 +227,15 @@ class RegistrationViewModel @Inject constructor(
 
             val age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
             if (currentDate.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
-                return if (age - 1 < 12) context.getString(R.string.minimum_age_requirement) else null
+                return if (age - 1 < 12)
+                    UiText.StringResource(R.string.minimum_age_requirement)
+                else null
             } else {
-                return if (age < 12) context.getString(R.string.minimum_age_requirement) else null
+                return if (age < 12)
+                    UiText.StringResource(R.string.minimum_age_requirement)
+                else null
             }
         }
-        return context.getString(R.string.date_of_birth_selection_requirement)
+        return UiText.StringResource(R.string.date_of_birth_selection_requirement)
     }
 }

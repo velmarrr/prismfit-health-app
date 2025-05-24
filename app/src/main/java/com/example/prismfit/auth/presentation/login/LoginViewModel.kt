@@ -1,7 +1,5 @@
 package com.example.prismfit.auth.presentation.login
 
-import android.content.Context
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
@@ -17,12 +15,11 @@ import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
 import com.example.prismfit.auth.data.model.AuthResult
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.example.prismfit.core.ui.utils.UiText
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -33,14 +30,17 @@ class LoginViewModel @Inject constructor(
     private val _isPasswordVisible = MutableStateFlow(false)
     val isPasswordVisible: StateFlow<Boolean> = _isPasswordVisible
 
-    private val _emailError = MutableStateFlow<String?>(null)
-    val emailError: StateFlow<String?> = _emailError
+    private val _emailError = MutableStateFlow<UiText?>(null)
+    val emailError: StateFlow<UiText?> = _emailError
 
-    private val _passwordError = MutableStateFlow<String?>(null)
-    val passwordError: StateFlow<String?> = _passwordError
+    private val _passwordError = MutableStateFlow<UiText?>(null)
+    val passwordError: StateFlow<UiText?> = _passwordError
 
     private val _loginSuccess = MutableStateFlow(false)
     val loginSuccess: StateFlow<Boolean> = _loginSuccess
+
+    private val isLoading = MutableStateFlow(false)
+    private val authResult = MutableStateFlow<AuthResult?>(null)
 
     val isLoginEnabled: StateFlow<Boolean> = combine(
         listOf(
@@ -52,8 +52,8 @@ class LoginViewModel @Inject constructor(
     ) { flows ->
         val currentEmail = flows[0] as String
         val currentPassword = flows[1] as String
-        val currentEmailError = flows[2] as String?
-        val currentPasswordError = flows[3] as String?
+        val currentEmailError = flows[2] as UiText?
+        val currentPasswordError = flows[3] as UiText?
 
         currentEmail.isNotEmpty() &&
         currentPassword.isNotEmpty() &&
@@ -79,40 +79,36 @@ class LoginViewModel @Inject constructor(
         _isPasswordVisible.update { !it }
     }
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _authResult = MutableStateFlow<AuthResult?>(null)
-    val authResult: StateFlow<AuthResult?> = _authResult
-
     fun onLoginButtonClicked() {
         _emailError.update { validateEmail(_email.value) }
         _passwordError.update { validatePassword(_password.value) }
 
         if (_emailError.value == null && _passwordError.value == null) {
-            _isLoading.value = true
+            isLoading.value = true
             viewModelScope.launch {
                 try {
                     when (val result = authRepository.login(_email.value, _password.value)) {
                         is AuthResult.Success -> {
-                            _authResult.value = result
+                            authResult.value = result
                             _loginSuccess.value = true
                         }
                         is AuthResult.Error -> {
                             if (result.field == AuthResult.Field.EMAIL) {
                                 _emailError.value = result.message
                             } else {
-                                _passwordError.value = context.getString(R.string.incorrect_password)
+                                _passwordError.value = UiText.StringResource(R.string.incorrect_password)
                             }
-                            _authResult.value = result
+                            authResult.value = result
                             _loginSuccess.value = false
                         }
                     }
                 } catch (e: Exception) {
-                    _authResult.value = AuthResult.Error(context.getString(R.string.error_during_logging_in))
+                    authResult.value = AuthResult.Error(
+                        UiText.StringResource(R.string.error_during_logging_in)
+                    )
                     _loginSuccess.value = false
                 } finally {
-                    _isLoading.value = false
+                    isLoading.value = false
                 }
             }
         }
@@ -122,23 +118,23 @@ class LoginViewModel @Inject constructor(
         _loginSuccess.value = false
     }
 
-    private fun validateEmail(email: String): String? {
+    private fun validateEmail(email: String): UiText? {
         val emailPattern = Pattern.compile(
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$"
         )
         return if (!emailPattern.matcher(email).matches()) {
-            context.getString(R.string.invalid_email_format)
+            UiText.StringResource(R.string.invalid_email_format)
         } else {
             null
         }
     }
 
-    private fun validatePassword(password: String): String? {
+    private fun validatePassword(password: String): UiText? {
         val hasDigit = password.any { it.isDigit() }
         val hasUpperCase = password.any { it.isUpperCase() }
         val hasLowerCase = password.any { it.isLowerCase() }
         return if (password.length < 9 || !hasDigit || !hasUpperCase || !hasLowerCase) {
-            context.getString(R.string.incorrect_password_format)
+            UiText.StringResource(R.string.incorrect_password_format)
         } else {
             null
         }
