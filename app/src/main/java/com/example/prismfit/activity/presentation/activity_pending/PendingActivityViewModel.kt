@@ -1,19 +1,16 @@
 package com.example.prismfit.activity.presentation.activity_pending
 
-import android.content.Context
-import android.content.Intent
 import android.location.Location
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.activity.data.model.ActivityRequest
 import com.example.prismfit.activity.data.model.toSerializable
 import com.example.prismfit.activity.data.repository.ActivityRepository
 import com.example.prismfit.activity.service.LocationService
+import com.example.prismfit.activity.service.LocationServiceStarter
 import com.example.prismfit.activity.service.ServiceActions
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PendingActivityViewModel @Inject constructor(
     private val repository: ActivityRepository,
-    @ApplicationContext private val context: Context
+    private val locationServiceStarter: LocationServiceStarter
 ) : ViewModel() {
 
     private val _path = MutableStateFlow<List<LatLng>>(emptyList())
@@ -65,12 +62,7 @@ class PendingActivityViewModel @Inject constructor(
         startTime = Instant.now()
         _isTracking.value = true
         startTimer()
-        ContextCompat.startForegroundService(
-            context,
-            Intent(context, LocationService::class.java).apply {
-                action = ServiceActions.ACTION_START.name
-            }
-        )
+        locationServiceStarter.startService(ServiceActions.ACTION_START.name)
     }
 
     fun stopTracking(selectedType: String, onFinish: () -> Unit) {
@@ -91,12 +83,7 @@ class PendingActivityViewModel @Inject constructor(
             repository.saveActivity(request)
             onFinish()
         }
-        ContextCompat.startForegroundService(
-            context,
-            Intent(context, LocationService::class.java).apply {
-                action = ServiceActions.ACTION_STOP.name
-            }
-        )
+        locationServiceStarter.startService(ServiceActions.ACTION_STOP.name)
         LocationService.locationFlow.value = emptyList()
     }
 
