@@ -2,10 +2,13 @@ package com.example.prismfit.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prismfit.R
 import com.example.prismfit.auth.data.repository.AuthRepository
 import com.example.prismfit.core.data.local.DataStoreManager
 import com.example.prismfit.core.ui.theme.ThemePreference
+import com.example.prismfit.core.ui.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,19 +35,35 @@ class SettingsViewModel @Inject constructor(
     private val _languageChanged = MutableSharedFlow<Unit>()
     val languageChanged: SharedFlow<Unit> = _languageChanged.asSharedFlow()
 
+    private val _errorMessage = MutableStateFlow<UiText?>(null)
+    val errorMessage: StateFlow<UiText?> = _errorMessage
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        val message = exception.message?.takeIf { it.isNotBlank() }
+        _errorMessage.value = if (message != null) {
+            UiText.StringResource(R.string.error, message)
+        } else {
+            UiText.StringResource(R.string.unexpected_error)
+        }
+    }
+
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(handler) {
             dataStoreManager.getPreferredLanguage().collect { preferredLanguage ->
                 if (preferredLanguage.isNotEmpty()) {
                     _currentLanguage.value = preferredLanguage
                 }
             }
         }
-        viewModelScope.launch {
+        viewModelScope.launch(handler) {
             dataStoreManager.getThemePreference().collect {
                 _themePreference.value = it
             }
         }
+    }
+
+    fun clearError() {
+        _errorMessage.value = null
     }
 
     fun onLanguageChanged(languageCode: String) {

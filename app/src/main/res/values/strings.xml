@@ -115,4 +115,6 @@
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
     <string name="system_theme">System</string>
+    <string name="error">Error: %1$s</string>
+    <string name="unexpected_error">An unexpected error occurred</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.prismfit.settings.presentation
 
 import android.app.Activity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,8 +41,10 @@ fun SettingsScreen(
     val currentLanguage by viewModel.currentLanguage.collectAsStateWithLifecycle()
     val theme by viewModel.themePreference.collectAsStateWithLifecycle()
     val sessionManager = LocalSessionManager.current
-
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
     val isLoggedIn by sessionManager.isLoggedIn.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn) {
             navController.navigate(LoginRoute) {
@@ -53,18 +59,37 @@ fun SettingsScreen(
             context.startActivity(intent)
         }
     }
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let { msg ->
+            snackbarHostState.showSnackbar(
+                message = msg.asString(context),
+                withDismissAction = true
+            )
+            viewModel.clearError()
+        }
+    }
 
-    SettingsContent(
-        currentLanguage = currentLanguage,
-        onLanguageSelected = { selected ->
-            if (selected != currentLanguage) {
-                viewModel.onLanguageChanged(selected)
-            }
-        },
-        theme = theme,
-        onThemeSelected = { viewModel.onThemeChanged(it) },
-        onLogoutClick = { viewModel.logout() }
-    )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        SettingsContent(
+            currentLanguage = currentLanguage,
+            onLanguageSelected = { selected ->
+                if (selected != currentLanguage) {
+                    viewModel.onLanguageChanged(selected)
+                }
+            },
+            theme = theme,
+            onThemeSelected = { viewModel.onThemeChanged(it) },
+            onLogoutClick = { viewModel.logout() }
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp)
+        )
+    }
 }
 
 @Composable

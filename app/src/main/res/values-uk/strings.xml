@@ -115,4 +115,6 @@
     <string name="light_theme">Світла</string>
     <string name="dark_theme">Темна</string>
     <string name="system_theme">Системна</string>
+    <string name="error">Помилка: %1$s</string>
+    <string name="unexpected_error">Виникла непередбачена помилка</string>
 </resources>
