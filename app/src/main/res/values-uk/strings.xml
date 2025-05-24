@@ -38,8 +38,8 @@
     <string name="error_during_signing_up">Виникла помилка під час реєстрації</string>
     <string name="password_length_requirement">Пароль повинен містити щонайменше 9 символів</string>
     <string name="password_digit_requirement">Пароль повинен містити щонайменше 1 цифру</string>
-    <string name="password_upper_case_letter_requirement">Пароль повинен містити щонайменше одну велику літеру</string>
-    <string name="password_lower_case_letter_requirement">Пароль повинен містити щонайменше одну малу літеру</string>
+    <string name="password_upper_case_letter_requirement">Пароль повинен містити велику літеру</string>
+    <string name="password_lower_case_letter_requirement">Пароль повинен містити малу літеру</string>
     <string name="nickname_length_requirement">Нікнейм повинен бути довжиною 3–20 символів</string>
     <string name="minimum_age_requirement">Вам повинно бути щонайменше 12 років</string>
     <string name="date_of_birth_selection_requirement">Будь ласка, виберіть свою дату народження</string>
