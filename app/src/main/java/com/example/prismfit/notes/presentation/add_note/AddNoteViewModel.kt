@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
 import com.example.prismfit.core.ui.utils.UiText
-import com.example.prismfit.notes.data.model.NoteRequest
-import com.example.prismfit.notes.data.repository.NoteRepository
+import com.example.prismfit.notes.presentation.add_note.model.NoteInput
+import com.example.prismfit.notes.domain.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -46,6 +46,7 @@ class AddNoteViewModel @Inject constructor(
 
     fun save() {
         val title = _state.value.inputTitle.trim()
+        val content = _state.value.inputContent.trim()
         if (title.isEmpty()) {
             _state.update {
                 it.copy(errorMessage = UiText.StringResource(R.string.title_requirement))
@@ -56,10 +57,10 @@ class AddNoteViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true, errorMessage = null) }
             noteRepository.saveNote(
-                NoteRequest(
+                NoteInput(
                     id = noteId,
                     title = title,
-                    content = _state.value.inputContent.trim()
+                    content = content
                 )
             )
             _exitChannel.send(Unit)
