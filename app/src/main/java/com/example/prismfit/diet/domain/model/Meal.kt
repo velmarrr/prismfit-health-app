@@ -1,4 +1,4 @@
-package com.example.prismfit.diet.data.model
+package com.example.prismfit.diet.domain.model
 
 data class Meal(
     val id: String,

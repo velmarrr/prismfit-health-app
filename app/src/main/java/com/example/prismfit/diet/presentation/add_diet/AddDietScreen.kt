@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.prismfit.R
-import com.example.prismfit.diet.data.model.Dish
+import com.example.prismfit.diet.domain.model.Dish
 import com.example.prismfit.diet.presentation.add_diet.AddDietViewModel.*
 import com.example.prismfit.diet.presentation.add_diet.components.DishInputField
 import com.example.prismfit.navigation.LocalNavController
@@ -101,7 +101,7 @@ fun AddDietScreen(mealId: String?) {
 fun AddDietContent(
     state: ScreenState,
     onMealTypeChange: (String) -> Unit,
-    onDishInputChange: (DishInput, String) -> Unit,
+    onDishInputChange: (DishInputEnum, String) -> Unit,
     onAddDish: () -> Unit,
     onRemoveDish: (Dish) -> Unit,
     onSave: () -> Unit,
@@ -208,12 +208,12 @@ fun AddDietContent(
         DishInputField(
             label = stringResource(R.string.dish_name),
             value = state.dishName,
-            onValueChange = { onDishInputChange(DishInput.NAME, it) }
+            onValueChange = { onDishInputChange(DishInputEnum.NAME, it) }
         )
         DishInputField(
             label = stringResource(R.string.weight_g),
             value = state.dishWeight,
-            onValueChange = { onDishInputChange(DishInput.WEIGHT, it) },
+            onValueChange = { onDishInputChange(DishInputEnum.WEIGHT, it) },
             keyboardType = KeyboardType.Number
         )
         Row(
@@ -224,14 +224,14 @@ fun AddDietContent(
                 modifier = Modifier.weight(1f),
                 label = stringResource(R.string.calories_per_100),
                 value = state.dishCalories,
-                onValueChange = { onDishInputChange(DishInput.CALORIES, it) },
+                onValueChange = { onDishInputChange(DishInputEnum.CALORIES, it) },
                 keyboardType = KeyboardType.Number
             )
             DishInputField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(R.string.protein_per_100),
                 value = state.dishProtein,
-                onValueChange = { onDishInputChange(DishInput.PROTEIN, it) },
+                onValueChange = { onDishInputChange(DishInputEnum.PROTEIN, it) },
                 keyboardType = KeyboardType.Number
             )
         }
@@ -243,14 +243,14 @@ fun AddDietContent(
                 modifier = Modifier.weight(1f),
                 label = stringResource(R.string.fat_per_100),
                 value = state.dishFat,
-                onValueChange = { onDishInputChange(DishInput.FAT, it) },
+                onValueChange = { onDishInputChange(DishInputEnum.FAT, it) },
                 keyboardType = KeyboardType.Number
             )
             DishInputField(
                 modifier = Modifier.weight(1f),
                 label = stringResource(R.string.carbs_per_100),
                 value = state.dishCarbs,
-                onValueChange = { onDishInputChange(DishInput.CARBS, it) },
+                onValueChange = { onDishInputChange(DishInputEnum.CARBS, it) },
                 keyboardType = KeyboardType.Number
             )
         }

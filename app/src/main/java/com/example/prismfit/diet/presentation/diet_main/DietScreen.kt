@@ -39,7 +39,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.prismfit.R
-import com.example.prismfit.diet.data.model.Meal
+import com.example.prismfit.diet.domain.model.Meal
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

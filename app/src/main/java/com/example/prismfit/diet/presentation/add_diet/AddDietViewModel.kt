@@ -4,15 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
 import com.example.prismfit.core.ui.utils.UiText
-import com.example.prismfit.diet.data.model.Dish
-import com.example.prismfit.diet.data.model.MealRequest
-import com.example.prismfit.diet.data.repository.DietRepository
-import com.example.prismfit.diet.presentation.add_diet.DishInput.CALORIES
-import com.example.prismfit.diet.presentation.add_diet.DishInput.NAME
-import com.example.prismfit.diet.presentation.add_diet.DishInput.PROTEIN
-import com.example.prismfit.diet.presentation.add_diet.DishInput.WEIGHT
-import com.example.prismfit.diet.presentation.add_diet.DishInput.FAT
-import com.example.prismfit.diet.presentation.add_diet.DishInput.CARBS
+import com.example.prismfit.diet.domain.model.Dish
+import com.example.prismfit.diet.domain.repository.DietRepository
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.CALORIES
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.NAME
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.PROTEIN
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.WEIGHT
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.FAT
+import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.CARBS
+import com.example.prismfit.diet.presentation.add_diet.model.MealInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -53,7 +53,7 @@ class AddDietViewModel @Inject constructor(
         }
     }
 
-    fun onDishInputChange(input: DishInput, value: String) {
+    fun onDishInputChange(input: DishInputEnum, value: String) {
         val isValidNumber = value.isEmpty() || value.matches(Regex("^\\d*\\.?\\d*\$"))
         _state.update {
             when (input) {
@@ -124,7 +124,7 @@ class AddDietViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true, errorMessage = null) }
             dietRepository.saveMeal(
-                MealRequest(
+                MealInput(
                     id = mealId,
                     type = mealType,
                     dishes = _state.value.dishes,

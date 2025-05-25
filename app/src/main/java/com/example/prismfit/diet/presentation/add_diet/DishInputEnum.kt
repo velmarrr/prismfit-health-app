@@ -1,6 +1,6 @@
 package com.example.prismfit.diet.presentation.add_diet
 
-enum class DishInput {
+enum class DishInputEnum {
     NAME,
     WEIGHT,
     CALORIES,
