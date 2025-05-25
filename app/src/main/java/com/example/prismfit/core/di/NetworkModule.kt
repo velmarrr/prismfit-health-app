@@ -1,6 +1,8 @@
 package com.example.prismfit.core.di
 
 import com.example.prismfit.activity.data.remote.ActivityApi
+import com.example.prismfit.activity.domain.model.ActivityType
+import com.example.prismfit.activity.domain.model.ActivityTypeDeserializer
 import com.example.prismfit.auth.data.remote.AuthApi
 import com.example.prismfit.auth.data.remote.AuthInterceptor
 import com.example.prismfit.diet.data.remote.DietApi
@@ -51,6 +53,7 @@ object NetworkModule {
     fun provideGson(): Gson {
         return GsonBuilder()
             .registerTypeAdapter(Instant::class.java, InstantAdapter())
+            .registerTypeAdapter(ActivityType::class.java, ActivityTypeDeserializer())
             .create()
     }
 

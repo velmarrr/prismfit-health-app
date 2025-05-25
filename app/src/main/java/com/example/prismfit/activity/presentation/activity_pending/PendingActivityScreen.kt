@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.prismfit.R
+import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.presentation.utils.toFormattedTime
 import com.example.prismfit.activity.service.LocationService
 import com.example.prismfit.activity.service.ServiceActions
@@ -49,7 +50,7 @@ import com.google.maps.android.compose.rememberMarkerState
 @Composable
 fun PendingActivityScreen(
     onFinish: () -> Unit,
-    selectedType: String
+    selectedType: ActivityType
 ) {
     val viewModel: PendingActivityViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -129,9 +130,9 @@ fun PendingActivityContent(
     distance: Double,
     pace: Double,
     onFinish: () -> Unit,
-    selectedType: String,
+    selectedType: ActivityType,
     onStartTracking: () -> Unit,
-    onStopTracking: (String, () -> Unit) -> Unit,
+    onStopTracking: (ActivityType, () -> Unit) -> Unit,
     cameraPositionState: CameraPositionState
 ) {
     Column(Modifier.fillMaxSize()) {
@@ -224,7 +225,9 @@ fun PendingActivityContent(
                     Button(
                         onClick = onStartTracking,
                         shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.height(80.dp).widthIn(min = 80.dp)
+                        modifier = Modifier
+                            .height(80.dp)
+                            .widthIn(min = 80.dp)
                     ) {
                         Text(stringResource(R.string.start))
                     }
@@ -232,7 +235,9 @@ fun PendingActivityContent(
                     Button(
                         onClick = { onStopTracking(selectedType, onFinish) },
                         shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.height(80.dp).widthIn(min = 80.dp)
+                        modifier = Modifier
+                            .height(80.dp)
+                            .widthIn(min = 80.dp)
                     ) {
                         Text(stringResource(R.string.stop))
                     }
@@ -253,7 +258,7 @@ private fun PendingActivityPreview() {
             distance = 566.0,
             pace = 5.6,
             onFinish = {},
-            selectedType = "Running",
+            selectedType = ActivityType.RUNNING,
             onStartTracking = {},
             onStopTracking = { _, _ -> },
             cameraPositionState = CameraPositionState()

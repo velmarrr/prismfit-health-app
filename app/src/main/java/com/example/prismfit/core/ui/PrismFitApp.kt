@@ -31,8 +31,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.prismfit.R
-import com.example.prismfit.activity.data.model.SerializableLatLng
-import com.example.prismfit.activity.data.model.toLatLng
+import com.example.prismfit.activity.domain.model.ActivityType
+import com.example.prismfit.activity.domain.model.SerializableLatLng
+import com.example.prismfit.activity.domain.model.toLatLng
 import com.example.prismfit.activity.presentation.activity_main.ActivityMainScreen
 import com.example.prismfit.activity.presentation.activity_map.ActivityMapScreen
 import com.example.prismfit.activity.presentation.activity_pending.PendingActivityScreen
@@ -195,7 +196,7 @@ fun PrismFitAppContent(navController: NavHostController) {
                     composable<ActivityMainRoute> {
                         ActivityMainScreen(
                             onStartClick = { selectedType ->
-                                navController.navigate(PendingActivityRoute(selectedType))
+                                navController.navigate(PendingActivityRoute(selectedType.typeName))
                             },
                             onActivityClick = { activity ->
                                 val routeJson = Json.encodeToString(activity.route.map { it })
@@ -204,8 +205,9 @@ fun PrismFitAppContent(navController: NavHostController) {
                         )
                     }
                     composable<PendingActivityRoute> { backStackEntry ->
-                        val selectedType = backStackEntry.arguments?.getString("selectedType")
+                        val selectedTypeName = backStackEntry.arguments?.getString("selectedType")
                             ?: "walking"
+                        val selectedType = ActivityType.fromString(selectedTypeName)
                         val context = LocalContext.current
                         PendingActivityScreen(
                             onFinish = {

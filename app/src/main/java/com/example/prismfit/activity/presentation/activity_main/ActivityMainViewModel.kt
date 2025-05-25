@@ -2,8 +2,9 @@ package com.example.prismfit.activity.presentation.activity_main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prismfit.activity.data.model.Activity
-import com.example.prismfit.activity.data.repository.ActivityRepository
+import com.example.prismfit.activity.domain.model.Activity
+import com.example.prismfit.activity.domain.model.ActivityType
+import com.example.prismfit.activity.domain.repository.ActivityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ class ActivityMainViewModel @Inject constructor(
     private val _activities = MutableStateFlow<List<Activity>>(emptyList())
     val activities: StateFlow<List<Activity>> = _activities
 
-    private val selectedType = MutableStateFlow("walking")
+    private val selectedType = MutableStateFlow(ActivityType.WALKING)
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -38,7 +39,7 @@ class ActivityMainViewModel @Inject constructor(
         }
     }
 
-    fun selectType(type: String) {
+    fun selectType(type: ActivityType) {
         selectedType.value = type
     }
 

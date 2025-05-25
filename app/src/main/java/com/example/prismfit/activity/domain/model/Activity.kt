@@ -1,10 +1,10 @@
-package com.example.prismfit.activity.data.model
+package com.example.prismfit.activity.domain.model
 
 import java.time.Instant
 
 data class Activity(
     val id: String,
-    val type: String,
+    val type: ActivityType,
     val startTime: Instant,
     val endTime: Instant,
     val durationSeconds: Long,

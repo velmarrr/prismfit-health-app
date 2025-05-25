@@ -14,13 +14,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prismfit.R
+import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.service.utils.hasLocationPermissions
 
 @Composable
 fun StartTrackingButton(
     modifier: Modifier,
-    selectedType: String,
-    onStartClick: (String) -> Unit
+    selectedType: ActivityType,
+    onStartClick: (ActivityType) -> Unit
 ) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -55,10 +56,9 @@ fun StartTrackingButton(
         modifier = modifier
     ) {
         val startText = when (selectedType) {
-            "walking" -> stringResource(R.string.start_walking)
-            "running" -> stringResource(R.string.start_running)
-            "cycling" -> stringResource(R.string.start_cycling)
-            else -> stringResource(R.string.start) + " $selectedType"
+            ActivityType.WALKING -> stringResource(R.string.start_walking)
+            ActivityType.RUNNING -> stringResource(R.string.start_running)
+            ActivityType.CYCLING -> stringResource(R.string.start_cycling)
         }
         Text(startText, fontSize = 16.sp)
     }

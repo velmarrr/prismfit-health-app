@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.prismfit.R
-import com.example.prismfit.activity.data.model.Activity
+import com.example.prismfit.activity.domain.model.Activity
+import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.presentation.activity_main.components.ActivityItem
 import com.example.prismfit.activity.presentation.activity_main.components.StartTrackingButton
 import kotlinx.coroutines.flow.map
@@ -38,11 +39,11 @@ import java.time.Instant
 
 @Composable
 fun ActivityMainScreen(
-    onStartClick: (String) -> Unit,
+    onStartClick: (ActivityType) -> Unit,
     onActivityClick: (Activity) -> Unit
 ) {
     val viewModel: ActivityMainViewModel = hiltViewModel()
-    val types = listOf("walking", "running", "cycling")
+    val types = ActivityType.entries
     val pagerState = rememberPagerState(
         pageCount = { types.size }
     )
@@ -74,12 +75,12 @@ fun ActivityMainScreen(
 
 @Composable
 fun ActivityMainContent(
-    types: List<String>,
+    types: List<ActivityType>,
     pagerState: PagerState,
-    selectedType: String,
+    selectedType: ActivityType,
     activities: List<Activity>,
     isLoading: Boolean,
-    onStartClick: (String) -> Unit,
+    onStartClick: (ActivityType) -> Unit,
     onActivityClick: (Activity) -> Unit,
     formatInstant: (Instant) -> String
 ) {
@@ -100,18 +101,17 @@ fun ActivityMainContent(
             ) {
                 Icon(
                     imageVector = when (types[page]) {
-                        "walking" -> Icons.Default.DirectionsWalk
-                        "running" -> Icons.Default.DirectionsRun
-                        else -> Icons.Default.DirectionsBike
+                        ActivityType.WALKING -> Icons.Default.DirectionsWalk
+                        ActivityType.RUNNING -> Icons.Default.DirectionsRun
+                        ActivityType.CYCLING -> Icons.Default.DirectionsBike
                     },
                     contentDescription = null,
                     modifier = Modifier.size(64.dp)
                 )
                 val typeLabel = when (types[page]) {
-                    "walking" -> stringResource(R.string.walking)
-                    "running" -> stringResource(R.string.running)
-                    "cycling" -> stringResource(R.string.cycling)
-                    else -> types[page]
+                    ActivityType.WALKING -> stringResource(R.string.walking)
+                    ActivityType.RUNNING -> stringResource(R.string.running)
+                    ActivityType.CYCLING -> stringResource(R.string.cycling)
                 }
                 Text(
                     text = typeLabel,

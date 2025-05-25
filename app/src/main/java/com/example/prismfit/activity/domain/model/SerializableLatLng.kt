@@ -1,4 +1,4 @@
-package com.example.prismfit.activity.data.model
+package com.example.prismfit.activity.domain.model
 
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.Serializable

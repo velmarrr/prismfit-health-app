@@ -3,9 +3,10 @@ package com.example.prismfit.activity.presentation.activity_pending
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prismfit.activity.data.model.ActivityRequest
-import com.example.prismfit.activity.data.model.toSerializable
-import com.example.prismfit.activity.data.repository.ActivityRepository
+import com.example.prismfit.activity.domain.model.ActivityType
+import com.example.prismfit.activity.domain.model.NewActivity
+import com.example.prismfit.activity.domain.model.toSerializable
+import com.example.prismfit.activity.domain.repository.ActivityRepository
 import com.example.prismfit.activity.service.LocationService
 import com.example.prismfit.activity.service.LocationServiceStarter
 import com.example.prismfit.activity.service.ServiceActions
@@ -65,22 +66,22 @@ class PendingActivityViewModel @Inject constructor(
         locationServiceStarter.startService(ServiceActions.ACTION_START.name)
     }
 
-    fun stopTracking(selectedType: String, onFinish: () -> Unit) {
+    fun stopTracking(selectedType: ActivityType, onFinish: () -> Unit) {
         timerJob?.cancel()
         _isTracking.value = false
         val end = Instant.now()
         val distance = calculateTotalDistance(_path.value)
         val duration = Duration.between(startTime, end).seconds
-        val request = ActivityRequest(
+        val newActivity = NewActivity(
             type = selectedType,
-            startTime = startTime!!,
+            startTime = startTime ?: return,
             endTime = end,
             distanceMeters = distance.toInt(),
             durationSeconds = duration,
             route = _path.value.map { it.toSerializable() }
         )
         viewModelScope.launch {
-            repository.saveActivity(request)
+            repository.saveActivity(newActivity)
             onFinish()
         }
         locationServiceStarter.startService(ServiceActions.ACTION_STOP.name)

@@ -22,7 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prismfit.R
-import com.example.prismfit.activity.data.model.Activity
+import com.example.prismfit.activity.domain.model.Activity
+import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.presentation.utils.toFormattedTime
 import com.example.prismfit.core.ui.theme.AppTheme
 import com.example.prismfit.core.ui.theme.ThemePreference
@@ -46,9 +47,9 @@ fun ActivityItem(
                 .padding(12.dp)
         ) {
             val typeLabel = when (activity.type) {
-                "walking" -> stringResource(R.string.walking)
-                "running" -> stringResource(R.string.running)
-                else -> stringResource(R.string.cycling)
+                ActivityType.WALKING -> stringResource(R.string.walking)
+                ActivityType.RUNNING -> stringResource(R.string.running)
+                ActivityType.CYCLING -> stringResource(R.string.cycling)
             }
             Text(
                 text = typeLabel,
@@ -95,7 +96,7 @@ fun ActivityItemPreview() {
         ActivityItem(
             activity = Activity(
                 id = "1",
-                type = "Cycling",
+                type = ActivityType.CYCLING,
                 startTime = Instant.parse("2025-05-18T14:20:00Z"),
                 endTime = Instant.parse("2025-05-18T14:40:00Z"),
                 durationSeconds = 1200,
