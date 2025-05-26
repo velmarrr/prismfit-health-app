@@ -10,5 +10,5 @@ data class Activity(
     val durationSeconds: Long,
     val distanceMeters: Int,
     val averageMetersPerHour: Int,
-    val route: List<SerializableLatLng>
+    val route: List<Location>
 )

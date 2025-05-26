@@ -1,9 +1,9 @@
-package com.example.prismfit.activity.data.remote.dto
+package com.example.prismfit.activity.data.network.model
 
-import com.example.prismfit.activity.domain.model.SerializableLatLng
+import com.example.prismfit.activity.domain.model.Location
 import java.time.Instant
 
-data class ActivityDto(
+data class ActivityNetworkModel(
     val id: String,
     val type: String,
     val startTime: Instant,
@@ -11,5 +11,5 @@ data class ActivityDto(
     val durationSeconds: Long,
     val distanceMeters: Int,
     val averageMetersPerHour: Int,
-    val route: List<SerializableLatLng>
+    val route: List<Location>
 )

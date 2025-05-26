@@ -1,6 +1,6 @@
-package com.example.prismfit.diet.data.remote.dto
+package com.example.prismfit.diet.data.network.model
 
-data class DishRequestDto(
+data class DishNetworkModel(
     val name: String,
     val weight: Double,
     val caloriesPer100: Double,

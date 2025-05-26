@@ -1,12 +1,12 @@
 package com.example.prismfit.core.di
 
-import com.example.prismfit.activity.data.remote.ActivityApi
+import com.example.prismfit.activity.data.network.api.ActivityApiService
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.ActivityTypeDeserializer
 import com.example.prismfit.auth.data.remote.AuthApi
 import com.example.prismfit.auth.data.remote.AuthInterceptor
-import com.example.prismfit.diet.data.remote.DietApi
-import com.example.prismfit.notes.data.remote.NoteApi
+import com.example.prismfit.diet.data.network.api.DietApiService
+import com.example.prismfit.notes.data.network.api.NoteApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -32,20 +32,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNoteApi(retrofit: Retrofit): NoteApi {
-        return retrofit.create(NoteApi::class.java)
+    fun provideNoteApi(retrofit: Retrofit): NoteApiService {
+        return retrofit.create(NoteApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideDietApi(retrofit: Retrofit): DietApi {
-        return retrofit.create(DietApi::class.java)
+    fun provideDietApi(retrofit: Retrofit): DietApiService {
+        return retrofit.create(DietApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideActivityApi(retrofit: Retrofit): ActivityApi {
-        return retrofit.create(ActivityApi::class.java)
+    fun provideActivityApi(retrofit: Retrofit): ActivityApiService {
+        return retrofit.create(ActivityApiService::class.java)
     }
 
     @Provides

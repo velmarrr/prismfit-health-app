@@ -1,4 +1,4 @@
-package com.example.prismfit.diet.data.remote.dto
+package com.example.prismfit.diet.data.network.model
 
 data class MealRequestDto(
     val id: String? = null,

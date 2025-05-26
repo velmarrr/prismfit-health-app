@@ -1,12 +1,12 @@
-package com.example.prismfit.activity.data.remote
+package com.example.prismfit.activity.data.network.mapper
 
-import com.example.prismfit.activity.data.remote.dto.ActivityDto
-import com.example.prismfit.activity.data.remote.dto.ActivityRequestDto
+import com.example.prismfit.activity.data.network.model.ActivityNetworkModel
+import com.example.prismfit.activity.data.network.model.ActivityRequestDto
 import com.example.prismfit.activity.domain.model.Activity
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.NewActivity
 
-fun ActivityDto.toDomain(): Activity {
+fun ActivityNetworkModel.toDomain(): Activity {
     return Activity(
         id = id,
         type = ActivityType.fromString(type),

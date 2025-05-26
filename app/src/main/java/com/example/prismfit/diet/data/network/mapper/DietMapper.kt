@@ -1,14 +1,14 @@
-package com.example.prismfit.diet.data.remote
+package com.example.prismfit.diet.data.network.mapper
 
-import com.example.prismfit.diet.data.remote.dto.DishDto
-import com.example.prismfit.diet.data.remote.dto.DishRequestDto
-import com.example.prismfit.diet.data.remote.dto.MealDto
-import com.example.prismfit.diet.data.remote.dto.MealRequestDto
+import com.example.prismfit.diet.data.network.model.DishNetworkModel
+import com.example.prismfit.diet.data.network.model.DishRequestDto
+import com.example.prismfit.diet.data.network.model.MealNetworkModel
+import com.example.prismfit.diet.data.network.model.MealRequestDto
 import com.example.prismfit.diet.domain.model.Dish
 import com.example.prismfit.diet.domain.model.Meal
 import com.example.prismfit.diet.presentation.add_diet.model.MealInput
 
-fun DishDto.toDomain(): Dish {
+fun DishNetworkModel.toDomain(): Dish {
     return Dish(
         name = name,
         weight = weight,
@@ -30,7 +30,7 @@ fun Dish.toRequestDto(): DishRequestDto {
     )
 }
 
-fun MealDto.toDomain(): Meal {
+fun MealNetworkModel.toDomain(): Meal {
     return Meal(
         id = id,
         type = type,

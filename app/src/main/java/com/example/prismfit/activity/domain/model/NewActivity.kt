@@ -8,5 +8,5 @@ data class NewActivity(
     val endTime: Instant,
     val durationSeconds: Long,
     val distanceMeters: Int,
-    val route: List<SerializableLatLng>
+    val route: List<Location>
 )

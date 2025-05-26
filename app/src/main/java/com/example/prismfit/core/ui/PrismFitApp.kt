@@ -32,7 +32,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.prismfit.R
 import com.example.prismfit.activity.domain.model.ActivityType
-import com.example.prismfit.activity.domain.model.SerializableLatLng
+import com.example.prismfit.activity.domain.model.Location
 import com.example.prismfit.activity.domain.model.toLatLng
 import com.example.prismfit.activity.presentation.activity_main.ActivityMainScreen
 import com.example.prismfit.activity.presentation.activity_map.ActivityMapScreen
@@ -222,7 +222,7 @@ fun PrismFitAppContent(navController: NavHostController) {
                     }
                     composable<ActivityMapRoute> { backStackEntry ->
                         val routeJson = backStackEntry.arguments?.getString("routeJson") ?: "[]"
-                        val points: List<LatLng> = Json.decodeFromString<List<SerializableLatLng>>(routeJson)
+                        val points: List<LatLng> = Json.decodeFromString<List<Location>>(routeJson)
                             .map { it.toLatLng() }
                         ActivityMapScreen(
                             route = points

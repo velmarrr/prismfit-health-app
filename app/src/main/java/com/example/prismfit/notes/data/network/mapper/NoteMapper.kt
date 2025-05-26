@@ -1,11 +1,11 @@
-package com.example.prismfit.notes.data.remote
+package com.example.prismfit.notes.data.network.mapper
 
-import com.example.prismfit.notes.data.remote.dto.NoteDto
-import com.example.prismfit.notes.data.remote.dto.NoteRequestDto
+import com.example.prismfit.notes.data.network.model.NoteNetworkModel
+import com.example.prismfit.notes.data.network.model.NoteRequestDto
 import com.example.prismfit.notes.domain.model.Note
 import com.example.prismfit.notes.presentation.add_note.model.NoteInput
 
-fun NoteDto.toDomain(): Note {
+fun NoteNetworkModel.toDomain(): Note {
     return Note(
         id = id,
         title = title,

@@ -1,6 +1,6 @@
-package com.example.prismfit.notes.data.remote.dto
+package com.example.prismfit.notes.data.network.model
 
-data class NoteDto(
+data class NoteNetworkModel(
     val id: String,
     val title: String,
     val content: String,

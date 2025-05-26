@@ -1,4 +1,4 @@
-package com.example.prismfit.notes.data.remote.dto
+package com.example.prismfit.notes.data.network.model
 
 data class NoteRequestDto(
     val id: String? = null,
