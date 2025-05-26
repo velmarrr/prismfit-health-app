@@ -12,6 +12,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.prismfit.core.ui.theme.AppTheme
+import com.example.prismfit.core.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,5 +46,18 @@ fun <T> SingleChoiceSegmentedButton(
                 label = { Text(labelMapper(option)) }
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SingleChoiceSegmentedButtonPreview() {
+    AppTheme(themePreference = ThemePreference.SYSTEM) {
+        SingleChoiceSegmentedButton(
+            options = listOf("English", "Ukrainian"),
+            selectedOption = "Ukrainian",
+            onOptionSelected = {},
+            labelMapper = { it }
+        )
     }
 }
