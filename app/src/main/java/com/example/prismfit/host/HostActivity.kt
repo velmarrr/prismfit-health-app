@@ -1,4 +1,4 @@
-package com.example.prismfit
+package com.example.prismfit.host
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -30,7 +30,7 @@ import javax.inject.Inject
 import java.util.Locale
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class HostActivity : ComponentActivity() {
     @Inject
     lateinit var sessionManager: SessionManager
 
