@@ -15,12 +15,11 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
-
 @Singleton
 class DataStoreManager @Inject constructor (
     @ApplicationContext private val context: Context
 ) {
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
     private val preferredLanguageKey = stringPreferencesKey("preferred_language")
     private val themePreferenceKey = stringPreferencesKey("theme_preference")
 
