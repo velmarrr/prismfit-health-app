@@ -2,6 +2,7 @@ package com.example.prismfit.navigation
 
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
+import com.example.prismfit.common.core.ext.replaceLastDotByDollar
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
@@ -74,7 +75,7 @@ fun NavDestination?.routeClass(): KClass<*>? {
         ?.split("/")
         ?.first()
         ?.let { className ->
-            generateSequence(className, ::replaceLastDotByDollar)
+            generateSequence(className) { it.replaceLastDotByDollar() }
                 .mapNotNull(::tryParseClass)
                 .firstOrNull()
         }
@@ -82,13 +83,4 @@ fun NavDestination?.routeClass(): KClass<*>? {
 
 private fun tryParseClass(className: String): KClass<*>? {
     return runCatching { Class.forName(className).kotlin }.getOrNull()
-}
-
-private fun replaceLastDotByDollar(input: String): String? {
-    val index = input.lastIndexOf('.')
-    return if (index != -1) {
-        String(input.toCharArray().apply { set(index, '$') })
-    } else {
-        null
-    }
 }
