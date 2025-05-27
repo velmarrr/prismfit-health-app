@@ -44,8 +44,12 @@ class ActivityMainViewModel @Inject constructor(
     }
 
     fun formatInstant(instant: Instant): String {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+        val formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)
             .withZone(ZoneId.systemDefault())
         return formatter.format(instant)
+    }
+
+    companion object {
+        private const val DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm"
     }
 }

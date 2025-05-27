@@ -61,8 +61,12 @@ class NotesViewModel @Inject constructor(
 
     fun formatDate(ms: Long?): String {
         return ms?.let {
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            val sdf = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
             sdf.format(Date(it))
         } ?: ""
+    }
+
+    companion object {
+        private const val DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm"
     }
 }
