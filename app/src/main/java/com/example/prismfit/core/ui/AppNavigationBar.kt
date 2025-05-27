@@ -14,7 +14,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.prismfit.navigation.AppNavigationTab
-import com.example.prismfit.navigation.routeClass
+import com.example.prismfit.navigation.utils.routeClass
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

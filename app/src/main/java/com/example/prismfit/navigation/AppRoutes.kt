@@ -1,10 +1,6 @@
 package com.example.prismfit.navigation
 
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
-import com.example.prismfit.common.core.ext.replaceLastDotByDollar
 import kotlinx.serialization.Serializable
-import kotlin.reflect.KClass
 
 @Serializable
 data object HomeGraph {
@@ -64,23 +60,4 @@ data object RegisterGraph {
 data object LoginGraph {
     @Serializable
     data object LoginRoute
-}
-
-fun NavBackStackEntry?.routeClass(): KClass<*>? {
-    return this?.destination.routeClass()
-}
-
-fun NavDestination?.routeClass(): KClass<*>? {
-    return this?.route
-        ?.split("/")
-        ?.first()
-        ?.let { className ->
-            generateSequence(className) { it.replaceLastDotByDollar() }
-                .mapNotNull(::tryParseClass)
-                .firstOrNull()
-        }
-}
-
-private fun tryParseClass(className: String): KClass<*>? {
-    return runCatching { Class.forName(className).kotlin }.getOrNull()
 }

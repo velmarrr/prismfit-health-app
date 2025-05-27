@@ -20,7 +20,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.prismfit.R
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
-import com.example.prismfit.navigation.routeClass
+import com.example.prismfit.navigation.utils.routeClass
 
 sealed class NavigateUpAction {
     data object Hidden : NavigateUpAction()

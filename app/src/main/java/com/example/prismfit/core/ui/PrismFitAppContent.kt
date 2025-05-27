@@ -63,7 +63,7 @@ import com.example.prismfit.navigation.NotesGraph.NotesRoute
 import com.example.prismfit.navigation.RegisterGraph.RegisterRoute
 import com.example.prismfit.navigation.SettingsGraph
 import com.example.prismfit.navigation.SettingsGraph.SettingsRoute
-import com.example.prismfit.navigation.routeClass
+import com.example.prismfit.navigation.utils.routeClass
 import com.example.prismfit.notes.presentation.add_note.AddNoteScreen
 import com.example.prismfit.notes.presentation.notes_list.NotesScreen
 import com.example.prismfit.settings.presentation.SettingsScreen
