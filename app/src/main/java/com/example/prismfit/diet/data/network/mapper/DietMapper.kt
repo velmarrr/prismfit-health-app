@@ -1,9 +1,9 @@
 package com.example.prismfit.diet.data.network.mapper
 
 import com.example.prismfit.diet.data.network.model.DishNetworkModel
-import com.example.prismfit.diet.data.network.model.DishRequestDto
+import com.example.prismfit.diet.data.network.model.DishRequestNetworkModel
 import com.example.prismfit.diet.data.network.model.MealNetworkModel
-import com.example.prismfit.diet.data.network.model.MealRequestDto
+import com.example.prismfit.diet.data.network.model.MealRequestNetworkModel
 import com.example.prismfit.diet.domain.model.Dish
 import com.example.prismfit.diet.domain.model.Meal
 import com.example.prismfit.diet.presentation.add_diet.model.MealInput
@@ -19,8 +19,8 @@ fun DishNetworkModel.toDomain(): Dish {
     )
 }
 
-fun Dish.toRequestDto(): DishRequestDto {
-    return DishRequestDto(
+fun Dish.toRequestDto(): DishRequestNetworkModel {
+    return DishRequestNetworkModel(
         name = name,
         weight = weight,
         caloriesPer100 = caloriesPer100,
@@ -39,8 +39,8 @@ fun MealNetworkModel.toDomain(): Meal {
     )
 }
 
-fun MealInput.toRequestDto(): MealRequestDto {
-    return MealRequestDto(
+fun MealInput.toRequestDto(): MealRequestNetworkModel {
+    return MealRequestNetworkModel(
         id = id,
         type = type,
         date = date,

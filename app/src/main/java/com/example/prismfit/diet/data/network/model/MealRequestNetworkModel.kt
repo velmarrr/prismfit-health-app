@@ -1,8 +1,8 @@
 package com.example.prismfit.diet.data.network.model
 
-data class MealRequestDto(
+data class MealRequestNetworkModel(
     val id: String? = null,
     val type: String,
     val date: String? = null,
-    val dishes: List<DishRequestDto>
+    val dishes: List<DishRequestNetworkModel>
 )

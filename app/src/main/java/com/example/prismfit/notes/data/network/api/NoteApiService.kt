@@ -1,7 +1,7 @@
 package com.example.prismfit.notes.data.network.api
 
 import com.example.prismfit.notes.data.network.model.NoteNetworkModel
-import com.example.prismfit.notes.data.network.model.NoteRequestDto
+import com.example.prismfit.notes.data.network.model.NoteRequestNetworkModel
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -14,7 +14,7 @@ interface NoteApiService {
     suspend fun getNotes(): List<NoteNetworkModel>
 
     @POST("/notes")
-    suspend fun saveNote(@Body request: NoteRequestDto): NoteNetworkModel
+    suspend fun saveNote(@Body request: NoteRequestNetworkModel): NoteNetworkModel
 
     @DELETE("/notes/{id}")
     suspend fun deleteNote(@Path("id") id: String)

@@ -1,7 +1,7 @@
 package com.example.prismfit.activity.data.network.mapper
 
 import com.example.prismfit.activity.data.network.model.ActivityNetworkModel
-import com.example.prismfit.activity.data.network.model.ActivityRequestDto
+import com.example.prismfit.activity.data.network.model.ActivityRequestNetworkModel
 import com.example.prismfit.activity.domain.model.Activity
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.NewActivity
@@ -19,8 +19,8 @@ fun ActivityNetworkModel.toDomain(): Activity {
     )
 }
 
-fun NewActivity.toRequestDto(): ActivityRequestDto {
-    return ActivityRequestDto(
+fun NewActivity.toRequestDto(): ActivityRequestNetworkModel {
+    return ActivityRequestNetworkModel(
         type = type.typeName,
         startTime = startTime,
         endTime = endTime,

@@ -2,7 +2,7 @@ package com.example.prismfit.notes.data.network.source
 
 import com.example.prismfit.notes.data.network.api.NoteApiService
 import com.example.prismfit.notes.data.network.model.NoteNetworkModel
-import com.example.prismfit.notes.data.network.model.NoteRequestDto
+import com.example.prismfit.notes.data.network.model.NoteRequestNetworkModel
 import javax.inject.Inject
 
 class NoteDataSource @Inject constructor(
@@ -13,7 +13,7 @@ class NoteDataSource @Inject constructor(
         return apiService.getNotes()
     }
 
-    suspend fun saveNote(request: NoteRequestDto): NoteNetworkModel {
+    suspend fun saveNote(request: NoteRequestNetworkModel): NoteNetworkModel {
         return apiService.saveNote(request)
     }
 
