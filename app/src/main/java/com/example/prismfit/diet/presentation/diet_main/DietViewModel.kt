@@ -3,7 +3,7 @@ package com.example.prismfit.diet.presentation.diet_main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.diet.domain.model.Meal
-import com.example.prismfit.diet.domain.repository.DietRepository
+import com.example.prismfit.diet.data.repository.DietRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

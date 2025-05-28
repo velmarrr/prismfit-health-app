@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
 import com.example.prismfit.core.ui.utils.UiText
 import com.example.prismfit.notes.presentation.add_note.model.NoteInput
-import com.example.prismfit.notes.domain.repository.NoteRepository
+import com.example.prismfit.notes.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel

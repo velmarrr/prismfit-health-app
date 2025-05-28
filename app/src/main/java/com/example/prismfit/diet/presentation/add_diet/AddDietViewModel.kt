@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.prismfit.R
 import com.example.prismfit.core.ui.utils.UiText
 import com.example.prismfit.diet.domain.model.Dish
-import com.example.prismfit.diet.domain.repository.DietRepository
+import com.example.prismfit.diet.data.repository.DietRepository
 import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.CALORIES
 import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.NAME
 import com.example.prismfit.diet.presentation.add_diet.DishInputEnum.PROTEIN

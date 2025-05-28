@@ -1,4 +1,4 @@
-package com.example.prismfit.activity.domain.repository
+package com.example.prismfit.activity.data.repository
 
 import com.example.prismfit.activity.domain.model.Activity
 import com.example.prismfit.activity.data.network.source.ActivityDataSource

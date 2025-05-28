@@ -3,7 +3,7 @@ package com.example.prismfit.notes.presentation.notes_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prismfit.notes.domain.model.Note
-import com.example.prismfit.notes.domain.repository.NoteRepository
+import com.example.prismfit.notes.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

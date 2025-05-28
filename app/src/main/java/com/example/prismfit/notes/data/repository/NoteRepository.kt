@@ -1,4 +1,4 @@
-package com.example.prismfit.notes.domain.repository
+package com.example.prismfit.notes.data.repository
 
 import com.example.prismfit.notes.domain.model.Note
 import com.example.prismfit.notes.data.network.mapper.toDomain

@@ -1,4 +1,4 @@
-package com.example.prismfit.diet.domain.repository
+package com.example.prismfit.diet.data.repository
 
 import com.example.prismfit.diet.domain.model.Meal
 import com.example.prismfit.diet.data.network.mapper.toDomain

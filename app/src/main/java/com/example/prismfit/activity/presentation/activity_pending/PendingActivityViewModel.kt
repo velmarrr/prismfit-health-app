@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.NewActivity
 import com.example.prismfit.activity.domain.model.toSerializable
-import com.example.prismfit.activity.domain.repository.ActivityRepository
+import com.example.prismfit.activity.data.repository.ActivityRepository
 import com.example.prismfit.activity.service.LocationService
 import com.example.prismfit.activity.service.LocationServiceStarter
 import com.example.prismfit.activity.service.ServiceActions
