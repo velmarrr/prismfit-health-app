@@ -19,7 +19,7 @@
     <string name="invalid_registration_data">Недійсні дані реєстрації</string>
     <string name="incorrect_password">Неправильний пароль</string>
     <string name="user_not_found">Користувача не знайдено</string>
-    <string name="ok">Гаразд</string>
+    <string name="ok">ОК</string>
     <string name="cancel">Скасувати</string>
     <string name="login">Увійти</string>
     <string name="email">Електронна пошта</string>

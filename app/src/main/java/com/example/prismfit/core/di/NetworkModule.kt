@@ -3,8 +3,8 @@ package com.example.prismfit.core.di
 import com.example.prismfit.activity.data.network.api.ActivityApiService
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.ActivityTypeDeserializer
-import com.example.prismfit.auth.data.remote.AuthApi
-import com.example.prismfit.auth.data.remote.AuthInterceptor
+import com.example.prismfit.auth.data.network.api.AuthApiService
+import com.example.prismfit.auth.data.network.api.AuthInterceptor
 import com.example.prismfit.diet.data.network.api.DietApiService
 import com.example.prismfit.notes.data.network.api.NoteApiService
 import com.google.gson.Gson
@@ -26,8 +26,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi {
-        return retrofit.create(AuthApi::class.java)
+    fun provideAuthApi(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 
     @Provides

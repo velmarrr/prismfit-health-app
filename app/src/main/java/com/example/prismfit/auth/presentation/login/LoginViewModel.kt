@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
-import com.example.prismfit.auth.data.model.AuthResult
+import com.example.prismfit.auth.domain.model.AuthResult
 import com.example.prismfit.core.ui.utils.UiText
 
 @HiltViewModel

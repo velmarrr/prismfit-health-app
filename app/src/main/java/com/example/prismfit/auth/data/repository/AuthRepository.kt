@@ -1,23 +1,26 @@
 package com.example.prismfit.auth.data.repository
 
 import com.example.prismfit.R
-import com.example.prismfit.auth.data.model.AuthRequest
-import com.example.prismfit.auth.data.model.AuthResult
-import com.example.prismfit.auth.data.model.RefreshRequest
-import com.example.prismfit.auth.data.remote.AuthApi
+import com.example.prismfit.auth.domain.model.AuthResult
+import com.example.prismfit.auth.data.network.model.RefreshRequestNetworkModel
+import com.example.prismfit.auth.data.network.mapper.toDomain
+import com.example.prismfit.auth.data.network.mapper.toDto
+import com.example.prismfit.auth.data.network.model.ApiError
+import com.example.prismfit.auth.data.network.model.ApiResult
+import com.example.prismfit.auth.data.network.source.AuthDataSource
+import com.example.prismfit.auth.domain.model.UserCredentials
 import com.example.prismfit.core.session.TokenStorage
 import com.example.prismfit.core.ui.utils.UiText
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
-    private val api: AuthApi,
+    private val dataSource: AuthDataSource,
     private val tokenStorage: TokenStorage
 ) {
     private val mutex = Mutex()
@@ -29,78 +32,24 @@ class AuthRepository @Inject constructor(
         nickname: String,
         dateOfBirth: Long
     ): AuthResult {
-        return try {
-            val res = api.register(AuthRequest(email, password, nickname, dateOfBirth))
-            if (res.isSuccessful) {
-                res.body()?.let {
-                    tokenStorage.saveTokens(it.accessToken, it.refreshToken)
-                    AuthResult.Success
-                } ?: AuthResult.Error(
-                    UiText.StringResource(R.string.empty_server_response),
-                    field = AuthResult.Field.GENERAL
-                )
-            } else {
-                when (res.code()) {
-                    409 -> AuthResult.Error(
-                        UiText.StringResource(R.string.user_already_exists),
-                        field = AuthResult.Field.EMAIL
-                    )
-
-                    400 -> AuthResult.Error(
-                        UiText.StringResource(R.string.invalid_registration_data),
-                        field = AuthResult.Field.GENERAL
-                    )
-
-                    else -> AuthResult.Error(
-                        UiText.DynamicString("Error: ${res.code()}"),
-                        field = AuthResult.Field.GENERAL
-                    )
-                }
+        return when (val result = dataSource.register(UserCredentials(email, password, nickname, dateOfBirth).toDto())) {
+            is ApiResult.Success -> {
+                tokenStorage.saveTokens(result.data.accessToken, result.data.refreshToken)
+                AuthResult.Success
             }
-        } catch (e: HttpException) {
-            AuthResult.Error(
-                UiText.DynamicString("HttpException: ${e.message()}"),
-                field = AuthResult.Field.GENERAL
-            )
-        } catch (e: Exception) {
-            AuthResult.Error(
-                UiText.DynamicString("Exception: ${e.localizedMessage}"),
-                field = AuthResult.Field.GENERAL
-            )
+
+            is ApiResult.Failure -> mapError(result.error)
         }
     }
 
     suspend fun login(email: String, password: String): AuthResult {
-        return try {
-            val res = api.login(AuthRequest(email, password, "", 0))
-            if (res.isSuccessful) {
-                res.body()?.let {
-                    tokenStorage.saveTokens(it.accessToken, it.refreshToken)
-                    AuthResult.Success
-                } ?: AuthResult.Error(
-                    UiText.StringResource(R.string.empty_server_response),
-                    field = AuthResult.Field.GENERAL
-                )
-            } else {
-                when (res.code()) {
-                    401 -> AuthResult.Error(UiText.StringResource(R.string.incorrect_password), field = AuthResult.Field.PASSWORD)
-                    404 -> AuthResult.Error(UiText.StringResource(R.string.user_not_found), field = AuthResult.Field.EMAIL)
-                    else -> AuthResult.Error(
-                        UiText.DynamicString("Error: ${res.code()}"),
-                        field = AuthResult.Field.GENERAL
-                    )
-                }
+        return when (val result = dataSource.login(UserCredentials(email, password, "", 0).toDto())) {
+            is ApiResult.Success -> {
+                tokenStorage.saveTokens(result.data.accessToken, result.data.refreshToken)
+                AuthResult.Success
             }
-        } catch (e: HttpException) {
-            AuthResult.Error(
-                UiText.DynamicString("HttpException: ${e.message()}"),
-                field = AuthResult.Field.GENERAL
-            )
-        } catch (e: Exception) {
-            AuthResult.Error(
-                UiText.DynamicString("Exception: ${e.localizedMessage}"),
-                field = AuthResult.Field.GENERAL
-            )
+
+            is ApiResult.Failure -> mapError(result.error)
         }
     }
 
@@ -123,26 +72,19 @@ class AuthRepository @Inject constructor(
                 return false
             }
 
-            return try {
-                val res = api.refresh(RefreshRequest(refreshToken))
-                if (res.isSuccessful) {
-                    res.body()?.let {
-                        tokenStorage.saveTokens(it.accessToken, it.refreshToken)
-                        deferred.complete(true)
-                        true
-                    } ?: run {
-                        deferred.complete(false)
-                        false
-                    }
-                } else {
+            return when (val result = dataSource.refresh(RefreshRequestNetworkModel(refreshToken))) {
+                is ApiResult.Success -> {
+                    val tokenPair = result.data.toDomain()
+                    tokenStorage.saveTokens(tokenPair.accessToken, tokenPair.refreshToken)
+                    deferred.complete(true)
+                    true
+                }
+
+                is ApiResult.Failure -> {
                     logout()
                     deferred.complete(false)
                     false
                 }
-            } catch (e: Exception) {
-                logout()
-                deferred.complete(false)
-                false
             }
         } finally {
             mutex.withLock {
@@ -153,5 +95,34 @@ class AuthRepository @Inject constructor(
 
     suspend fun logout() {
         tokenStorage.clearTokens()
+    }
+
+    private fun mapError(error: ApiError): AuthResult {
+        return when (error) {
+            ApiError.Conflict -> AuthResult.Error(
+                UiText.StringResource(R.string.user_already_exists),
+                AuthResult.Field.EMAIL
+            )
+            ApiError.BadRequest -> AuthResult.Error(
+                UiText.StringResource(R.string.invalid_registration_data),
+                AuthResult.Field.GENERAL
+            )
+            ApiError.Unauthorized -> AuthResult.Error(
+                UiText.StringResource(R.string.incorrect_password),
+                AuthResult.Field.PASSWORD
+            )
+            ApiError.NotFound -> AuthResult.Error(
+                UiText.StringResource(R.string.user_not_found),
+                AuthResult.Field.EMAIL
+            )
+            is ApiError.Unknown -> AuthResult.Error(
+                UiText.DynamicString("Error: ${error.code}"),
+                AuthResult.Field.GENERAL
+            )
+            is ApiError.Exception -> AuthResult.Error(
+                UiText.DynamicString("Exception: ${error.throwable.localizedMessage}"),
+                AuthResult.Field.GENERAL
+            )
+        }
     }
 }

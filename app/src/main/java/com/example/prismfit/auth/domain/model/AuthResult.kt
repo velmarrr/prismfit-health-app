@@ -1,4 +1,4 @@
-package com.example.prismfit.auth.data.model
+package com.example.prismfit.auth.domain.model
 
 import com.example.prismfit.core.ui.utils.UiText
 

@@ -1,4 +1,4 @@
-package com.example.prismfit.auth.data.remote
+package com.example.prismfit.auth.data.network.api
 
 import com.example.prismfit.auth.data.repository.AuthRepository
 import com.example.prismfit.core.session.TokenStorage
