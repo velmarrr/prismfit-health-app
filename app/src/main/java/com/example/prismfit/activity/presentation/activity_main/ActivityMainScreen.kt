@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.map
 
 @Composable
 fun ActivityMainScreen(
-    onStartClick: (ActivityType) -> Unit,
-    onActivityClick: (Activity) -> Unit
+    onAction: (ActivityAction) -> Unit
 ) {
     val viewModel: ActivityMainViewModel = hiltViewModel()
     val types = ActivityType.entries
@@ -40,8 +39,7 @@ fun ActivityMainScreen(
         selectedType = selectedType,
         activities = activities,
         isLoading = isLoading,
-        onStartClick = onStartClick,
-        onActivityClick  = onActivityClick,
+        onAction = onAction,
         formatInstant = viewModel::formatInstant
     )
 }

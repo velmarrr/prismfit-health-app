@@ -38,8 +38,7 @@ fun ActivityMainContent(
     selectedType: ActivityType,
     activities: List<Activity>,
     isLoading: Boolean,
-    onStartClick: (ActivityType) -> Unit,
-    onActivityClick: (Activity) -> Unit,
+    onAction: (ActivityAction) -> Unit,
     formatInstant: (Instant) -> String
 ) {
     Column(
@@ -81,7 +80,7 @@ fun ActivityMainContent(
         StartTrackingButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             selectedType = selectedType,
-            onStartClick = onStartClick
+            onStartClick = { type -> onAction(ActivityAction.OnStart(type)) }
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (isLoading) {
@@ -92,7 +91,7 @@ fun ActivityMainContent(
                     ActivityItem(
                         activity = activity,
                         formatInstant = formatInstant,
-                        onClick = { onActivityClick(activity) }
+                        onClick = { onAction(ActivityAction.OnActivityClick(it)) }
                     )
                 }
             }

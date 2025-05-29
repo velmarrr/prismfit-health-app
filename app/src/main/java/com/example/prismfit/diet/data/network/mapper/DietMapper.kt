@@ -7,6 +7,7 @@ import com.example.prismfit.diet.data.network.model.MealRequestNetworkModel
 import com.example.prismfit.diet.domain.model.Dish
 import com.example.prismfit.diet.domain.model.Meal
 import com.example.prismfit.diet.presentation.add_diet.model.MealInput
+import java.time.LocalDate
 
 fun DishNetworkModel.toDomain(): Dish {
     return Dish(
@@ -40,10 +41,11 @@ fun MealNetworkModel.toDomain(): Meal {
 }
 
 fun MealInput.toRequestDto(): MealRequestNetworkModel {
+    val dateString = date ?: LocalDate.now().toString()
     return MealRequestNetworkModel(
         id = id,
         type = type,
-        date = date,
+        date = dateString,
         dishes = dishes.map { it.toRequestDto() }
     )
 }

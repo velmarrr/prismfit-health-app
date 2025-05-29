@@ -39,11 +39,15 @@ fun NotesScreen(onNoteClick: (String) -> Unit) {
         } else {
             NotesContent(
                 notes = notes,
-                onDeleteRequest = viewModel::requestDeleteNote,
-                onDeleteConfirm = viewModel::confirmDelete,
-                onDeleteCancel = viewModel::cancelDelete,
                 noteToDelete = noteToDelete,
-                onNoteClick = onNoteClick,
+                onAction = { action ->
+                    when (action) {
+                        is NotesAction.DeleteRequest -> viewModel.requestDeleteNote(action.noteId)
+                        NotesAction.DeleteConfirm -> viewModel.confirmDelete()
+                        NotesAction.DeleteCancel -> viewModel.cancelDelete()
+                        is NotesAction.NoteClick -> onNoteClick(action.noteId)
+                    }
+                },
                 formatDate = viewModel::formatDate
             )
         }

@@ -38,11 +38,8 @@ import java.util.Locale
 @Composable
 fun DietContent(
     meals: List<Meal>,
-    onDeleteRequest: (String) -> Unit,
-    onDeleteConfirm: () -> Unit,
-    onDeleteCancel: () -> Unit,
     mealToDelete: String?,
-    onMealClick: (String) -> Unit,
+    onAction: (DietAction) -> Unit,
     formatNumber: (Double) -> String
 ) {
 
@@ -155,7 +152,7 @@ fun DietContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .clickable { onMealClick(meal.id) },
+                            .clickable { onAction(DietAction.MealClick(meal.id)) },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
@@ -207,7 +204,7 @@ fun DietContent(
                                     )
                                 }
                             }
-                            IconButton(onClick = { onDeleteRequest(meal.id) }) {
+                            IconButton(onClick = { onAction(DietAction.DeleteRequest(meal.id)) }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.delete)
@@ -223,16 +220,16 @@ fun DietContent(
         }
         if (mealToDelete != null) {
             AlertDialog(
-                onDismissRequest = onDeleteCancel,
+                onDismissRequest = { onAction(DietAction.DeleteCancel) },
                 title = { Text(stringResource(R.string.delete_confirmation)) },
                 text = { Text(stringResource(R.string.meal_delete_confirmation_question)) },
                 confirmButton = {
-                    TextButton(onClick = onDeleteConfirm) {
+                    TextButton(onClick = { onAction(DietAction.DeleteConfirm) }) {
                         Text(stringResource(R.string.yes))
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = onDeleteCancel) {
+                    TextButton(onClick = { onAction(DietAction.DeleteCancel) }) {
                         Text(stringResource(R.string.no))
                     }
                 }

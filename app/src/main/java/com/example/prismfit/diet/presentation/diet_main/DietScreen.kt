@@ -39,11 +39,15 @@ fun DietScreen(onMealClick: (String) -> Unit) {
         } else {
             DietContent(
                 meals = meals,
-                onDeleteRequest = viewModel::requestDeleteMeal,
-                onDeleteConfirm = viewModel::confirmDelete,
-                onDeleteCancel = viewModel::cancelDelete,
                 mealToDelete = mealToDelete,
-                onMealClick = onMealClick,
+                onAction = { action ->
+                    when (action) {
+                        is DietAction.DeleteRequest -> viewModel.requestDeleteMeal(action.mealId)
+                        DietAction.DeleteConfirm -> viewModel.confirmDelete()
+                        DietAction.DeleteCancel -> viewModel.cancelDelete()
+                        is DietAction.MealClick -> onMealClick(action.mealId)
+                    }
+                },
                 formatNumber = viewModel::formatNumber
             )
         }

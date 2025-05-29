@@ -33,6 +33,7 @@ import com.example.prismfit.R
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.Location
 import com.example.prismfit.activity.domain.model.toLatLng
+import com.example.prismfit.activity.presentation.activity_main.ActivityAction
 import com.example.prismfit.activity.presentation.activity_main.ActivityMainScreen
 import com.example.prismfit.activity.presentation.activity_map.ActivityMapScreen
 import com.example.prismfit.activity.presentation.activity_pending.PendingActivityScreen
@@ -171,12 +172,16 @@ fun PrismFitAppContent(navController: NavHostController) {
                 navigation<ActivityGraph>(startDestination = ActivityMainRoute) {
                     composable<ActivityMainRoute> {
                         ActivityMainScreen(
-                            onStartClick = { selectedType ->
-                                navController.navigate(PendingActivityRoute(selectedType.typeName))
-                            },
-                            onActivityClick = { activity ->
-                                val routeJson = Json.encodeToString(activity.route.map { it })
-                                navController.navigate(ActivityMapRoute(routeJson))
+                            onAction = { action ->
+                                when (action) {
+                                    is ActivityAction.OnStart -> {
+                                        navController.navigate(PendingActivityRoute(action.type.typeName))
+                                    }
+                                    is ActivityAction.OnActivityClick -> {
+                                        val routeJson = Json.encodeToString(action.activity.route.map { it })
+                                        navController.navigate(ActivityMapRoute(routeJson))
+                                    }
+                                }
                             }
                         )
                     }

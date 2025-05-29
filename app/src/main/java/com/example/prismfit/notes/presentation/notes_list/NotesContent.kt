@@ -25,11 +25,8 @@ import com.example.prismfit.notes.domain.model.Note
 @Composable
 fun NotesContent(
     notes: List<Note>,
-    onDeleteRequest: (String) -> Unit,
-    onDeleteConfirm: () -> Unit,
-    onDeleteCancel: () -> Unit,
     noteToDelete: String?,
-    onNoteClick: (String) -> Unit,
+    onAction: (NotesAction) -> Unit,
     formatDate: (Long?) -> String
 ) {
     LazyColumn(
@@ -44,7 +41,7 @@ fun NotesContent(
                 trailingContent = {
                     IconButton(
                         onClick = {
-                            onDeleteRequest(note.id)
+                            onAction(NotesAction.DeleteRequest(note.id))
                         }
                     ) {
                         Icon(
@@ -53,7 +50,9 @@ fun NotesContent(
                         )
                     }
                 },
-                modifier = Modifier.clickable { onNoteClick(note.id) }
+                modifier = Modifier.clickable {
+                    onAction(NotesAction.NoteClick(note.id))
+                }
             )
         }
         item {
@@ -63,16 +62,16 @@ fun NotesContent(
 
     if (noteToDelete != null) {
         AlertDialog(
-            onDismissRequest = onDeleteCancel,
+            onDismissRequest = { onAction(NotesAction.DeleteCancel) },
             title = { Text(stringResource(R.string.delete_confirmation)) },
             text = { Text(stringResource(R.string.note_delete_confirmation_question)) },
             confirmButton = {
-                TextButton(onClick = onDeleteConfirm) {
+                TextButton(onClick = { onAction(NotesAction.DeleteConfirm) }) {
                     Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
-                TextButton(onClick = onDeleteCancel) {
+                TextButton(onClick = { onAction(NotesAction.DeleteCancel) }) {
                     Text(stringResource(R.string.no))
                 }
             }
