@@ -89,6 +89,7 @@ fun ActivityMainContent(
             LazyColumn {
                 items(activities) { activity ->
                     ActivityItem(
+                        modifier = Modifier.padding(8.dp),
                         activity = activity,
                         formatInstant = formatInstant,
                         onClick = { onAction(ActivityAction.OnActivityClick(it)) }

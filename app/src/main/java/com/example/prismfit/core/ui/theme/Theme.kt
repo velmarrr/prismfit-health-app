@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -239,6 +240,17 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+private val LightCustomColors = CustomColors(
+    purpleContainer = purpleContainerLight,
+    greenContainer = greenContainerLight
+)
+
+private val DarkCustomColors = CustomColors(
+    purpleContainer = purpleContainerDark,
+    greenContainer = greenContainerDark
+)
+
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -273,9 +285,13 @@ fun AppTheme(
         else -> lightScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AppTypography,
-        content = content
-    )
+    val customColors = if (darkTheme) DarkCustomColors else LightCustomColors
+
+    CompositionLocalProvider(LocalCustomColors provides customColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }

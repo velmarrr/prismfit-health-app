@@ -73,7 +73,7 @@
     <string name="dish_weight_requirement">Вага страви повинна бути більшою за 0г</string>
     <string name="meal_type_requirement">Виберіть тип прийому їжі</string>
     <string name="added_dishes_requirement">Додайте хоча б одну страву</string>
-    <string name="today">Сьогодні:</string>
+    <string name="today">Сьогодні</string>
     <string name="calories_short">ккал</string>
     <string name="calories">Калорії</string>
     <string name="grams_short">г</string>
@@ -117,4 +117,5 @@
     <string name="system_theme">Системна</string>
     <string name="error">Помилка: %1$s</string>
     <string name="unexpected_error">Виникла непередбачена помилка</string>
+    <string name="activities_absence">Сьогодні не було активностей</string>
 </resources>

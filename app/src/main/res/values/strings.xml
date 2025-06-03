@@ -73,7 +73,7 @@
     <string name="dish_weight_requirement">Dish weight must be greater than 0g</string>
     <string name="meal_type_requirement">Choose a meal type</string>
     <string name="added_dishes_requirement">Add at least one dish</string>
-    <string name="today">Today:</string>
+    <string name="today">Today</string>
     <string name="calories_short">kcal</string>
     <string name="calories">Calories</string>
     <string name="grams_short">g</string>
@@ -117,4 +117,5 @@
     <string name="system_theme">System</string>
     <string name="error">Error: %1$s</string>
     <string name="unexpected_error">An unexpected error occurred</string>
+    <string name="activities_absence">No activities today</string>
 </resources>

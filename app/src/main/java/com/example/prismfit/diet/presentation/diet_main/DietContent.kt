@@ -64,7 +64,7 @@ fun DietContent(
             .padding(top = 16.dp, end = 16.dp, start = 16.dp)
     ) {
         Text(
-            text = stringResource(R.string.today),
+            text = stringResource(R.string.today) + ":",
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(10.dp))
