@@ -14,6 +14,7 @@ okhttp = "4.11.0"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.2.0"
 retrofit = "2.9.0"
+retrofit2KotlinxSerializationConverter = "0.8.0"
 runtimeLivedata = "1.8.0"
 secretsGradlePlugin = "2.0.1"
 uiTextGoogleFonts = "1.7.8"
@@ -60,6 +61,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 [plugins]

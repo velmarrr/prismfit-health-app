@@ -1,22 +1,20 @@
 package com.example.prismfit.core.di
 
 import com.example.prismfit.activity.data.network.api.ActivityApiService
-import com.example.prismfit.activity.domain.model.ActivityType
-import com.example.prismfit.activity.domain.model.ActivityTypeDeserializer
 import com.example.prismfit.auth.data.network.api.AuthApiService
 import com.example.prismfit.auth.data.network.api.AuthInterceptor
 import com.example.prismfit.diet.data.network.api.DietApiService
 import com.example.prismfit.notes.data.network.api.NoteApiService
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -50,11 +48,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder()
-            .registerTypeAdapter(Instant::class.java, InstantAdapter())
-            .registerTypeAdapter(ActivityType::class.java, ActivityTypeDeserializer())
-            .create()
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            isLenient = true
+        }
     }
 
     @Provides
@@ -67,13 +66,14 @@ object NetworkModule {
             .build()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080")
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 }

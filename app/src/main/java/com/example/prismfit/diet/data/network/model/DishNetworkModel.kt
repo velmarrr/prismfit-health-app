@@ -1,5 +1,8 @@
 package com.example.prismfit.diet.data.network.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DishNetworkModel(
     val name: String,
     val weight: Double,
