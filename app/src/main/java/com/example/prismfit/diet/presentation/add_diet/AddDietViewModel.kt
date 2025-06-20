@@ -34,6 +34,9 @@ class AddDietViewModel @Inject constructor(
     private val _exitChannel = Channel<Unit>()
     val exitChannel: ReceiveChannel<Unit> = _exitChannel
 
+    private val _networkErrorMessage = MutableStateFlow<UiText?>(null)
+    val networkErrorMessage: StateFlow<UiText?> = _networkErrorMessage
+
     private var mealId: String? = null
 
     fun initWithId(id: String?) {
@@ -41,13 +44,17 @@ class AddDietViewModel @Inject constructor(
         mealId = id
         if (mealId != null) {
             viewModelScope.launch {
-                val meal =  dietRepository.getAllMeals().find { it.id == mealId }
-                meal?.let {
-                    _state.value = ScreenState(
-                        mealType = it.type,
-                        dishes = it.dishes,
-                        date = it.date
-                    )
+                try {
+                    val meal = dietRepository.getAllMeals().find { it.id == mealId }
+                    meal?.let {
+                        _state.value = ScreenState(
+                            mealType = it.type,
+                            dishes = it.dishes,
+                            date = it.date
+                        )
+                    }
+                } catch (e: Exception) {
+                    _networkErrorMessage.value = UiText.StringResource(R.string.network_error)
                 }
             }
         }
@@ -123,20 +130,31 @@ class AddDietViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true, errorMessage = null) }
-            dietRepository.saveMeal(
-                MealInput(
-                    id = mealId,
-                    type = mealType,
-                    dishes = _state.value.dishes,
-                    date = _state.value.date
+
+            try {
+                dietRepository.saveMeal(
+                    MealInput(
+                        id = mealId,
+                        type = mealType,
+                        dishes = _state.value.dishes,
+                        date = _state.value.date
+                    )
                 )
-            )
-            _exitChannel.send(Unit)
+                _exitChannel.send(Unit)
+            } catch (e: Exception) {
+                _networkErrorMessage.value = UiText.StringResource(R.string.save_error)
+            } finally {
+                _state.update { it.copy(isSaving = false) }
+            }
         }
     }
 
     fun clearErrorMessage() {
         _state.update { it.copy(errorMessage = null) }
+    }
+
+    fun dismissNetworkError() {
+        _networkErrorMessage.value = null
     }
 
     fun formatNumber(value: Double): String {

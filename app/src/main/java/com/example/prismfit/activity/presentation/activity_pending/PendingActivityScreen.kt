@@ -1,6 +1,7 @@
 package com.example.prismfit.activity.presentation.activity_pending
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -32,10 +33,18 @@ fun PendingActivityScreen(
     val distance by viewModel.distance.collectAsStateWithLifecycle()
     val pace by viewModel.pace.collectAsStateWithLifecycle()
     val showDialog by viewModel.showBackDialog.collectAsStateWithLifecycle()
+    val networkErrorMessage by viewModel.networkErrorMessage.collectAsStateWithLifecycle()
     val cameraPositionState = rememberCameraPositionState()
 
     BackHandler(enabled = isTracking) {
         viewModel.triggerBackDialog()
+    }
+
+    LaunchedEffect(networkErrorMessage) {
+        networkErrorMessage?.let {
+            Toast.makeText(context, it.asString(context), Toast.LENGTH_LONG).show()
+            viewModel.dismissNetworkError()
+        }
     }
 
     LaunchedEffect(path) {

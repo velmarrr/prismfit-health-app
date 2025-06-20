@@ -3,6 +3,7 @@ package com.example.prismfit.activity.presentation.activity_pending
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prismfit.R
 import com.example.prismfit.activity.domain.model.ActivityType
 import com.example.prismfit.activity.domain.model.NewActivity
 import com.example.prismfit.activity.domain.model.toSerializable
@@ -10,6 +11,7 @@ import com.example.prismfit.activity.data.repository.ActivityRepository
 import com.example.prismfit.activity.service.LocationService
 import com.example.prismfit.activity.service.LocationServiceStarter
 import com.example.prismfit.activity.service.ServiceActions
+import com.example.prismfit.core.ui.utils.UiText
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -46,16 +48,11 @@ class PendingActivityViewModel @Inject constructor(
     private val _showBackDialog = MutableStateFlow(false)
     val showBackDialog: StateFlow<Boolean> = _showBackDialog
 
+    private val _networkErrorMessage = MutableStateFlow<UiText?>(null)
+    val networkErrorMessage: StateFlow<UiText?> = _networkErrorMessage
+
     private var startTime: Instant? = null
     private var timerJob: Job? = null
-
-    fun triggerBackDialog() {
-        _showBackDialog.value = true
-    }
-
-    fun dismissBackDialog() {
-        _showBackDialog.value = false
-    }
 
     fun startTracking() {
         LocationService.locationFlow.value = emptyList()
@@ -81,8 +78,13 @@ class PendingActivityViewModel @Inject constructor(
             route = _path.value.map { it.toSerializable() }
         )
         viewModelScope.launch {
-            repository.saveActivity(newActivity)
-            onFinish()
+            try {
+                repository.saveActivity(newActivity)
+            } catch (e: Exception) {
+                _networkErrorMessage.value = UiText.StringResource(R.string.save_error)
+            } finally {
+                onFinish()
+            }
         }
         locationServiceStarter.startService(ServiceActions.ACTION_STOP.name)
         LocationService.locationFlow.value = emptyList()
@@ -118,5 +120,17 @@ class PendingActivityViewModel @Inject constructor(
             total += res[0]
         }
         return total
+    }
+
+    fun triggerBackDialog() {
+        _showBackDialog.value = true
+    }
+
+    fun dismissBackDialog() {
+        _showBackDialog.value = false
+    }
+
+    fun dismissNetworkError() {
+        _networkErrorMessage.value = null
     }
 }

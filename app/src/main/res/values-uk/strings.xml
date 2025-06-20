@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PrismFit Health App</string>
+    <string name="app_name">PrismFit</string>
     <string name="home_screen">Головна</string>
     <string name="activity_main_screen">Активність</string>
     <string name="pending_activity_screen_walking">Ходьба</string>
@@ -118,4 +118,8 @@
     <string name="error">Помилка: %1$s</string>
     <string name="unexpected_error">Виникла непередбачена помилка</string>
     <string name="activities_absence">Сьогодні не було активностей</string>
+    <string name="network_error">Проблеми з мережею</string>
+    <string name="deletion_error">Не вдалося видалити</string>
+    <string name="save_error">Не вдалося зберегти</string>
+    <string name="no_internet_connection">Немає з\'єднання з Інтернетом</string>
 </resources>

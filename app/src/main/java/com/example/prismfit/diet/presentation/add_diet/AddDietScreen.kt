@@ -1,5 +1,6 @@
 package com.example.prismfit.diet.presentation.add_diet
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHost
@@ -20,18 +21,21 @@ import com.example.prismfit.notes.presentation.EventConsumer
 fun AddDietScreen(mealId: String?) {
 
     val viewModel: AddDietViewModel = hiltViewModel()
-
-    LaunchedEffect(mealId) {
-        viewModel.initWithId(mealId)
-    }
-
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val networkErrorMessage by viewModel.networkErrorMessage.collectAsStateWithLifecycle()
 
     EventConsumer(viewModel.exitChannel) {
         navController.popBackStack()
+    }
+
+    LaunchedEffect(networkErrorMessage) {
+        networkErrorMessage?.let {
+            Toast.makeText(context, it.asString(context), Toast.LENGTH_LONG).show()
+            viewModel.dismissNetworkError()
+        }
     }
 
     LaunchedEffect(state.errorMessage) {
@@ -39,6 +43,10 @@ fun AddDietScreen(mealId: String?) {
             snackbarHostState.showSnackbar(message.asString(context))
             viewModel.clearErrorMessage()
         }
+    }
+
+    LaunchedEffect(mealId) {
+        viewModel.initWithId(mealId)
     }
 
     Box(

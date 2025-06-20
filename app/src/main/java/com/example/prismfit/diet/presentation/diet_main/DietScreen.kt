@@ -1,5 +1,6 @@
 package com.example.prismfit.diet.presentation.diet_main
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -8,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -20,8 +22,18 @@ fun DietScreen(onMealClick: (String) -> Unit) {
     val viewModel: DietViewModel = hiltViewModel()
     val meals by viewModel.mealsFlow.collectAsStateWithLifecycle()
     val mealToDelete by viewModel.mealToDelete.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val networkErrorMessage by viewModel.networkErrorMessage.collectAsStateWithLifecycle()
+    val isConnected by viewModel.isConnected.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(networkErrorMessage) {
+        networkErrorMessage?.let {
+            Toast.makeText(context, it.asString(context), Toast.LENGTH_LONG).show()
+            viewModel.dismissNetworkError()
+        }
+    }
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -48,6 +60,7 @@ fun DietScreen(onMealClick: (String) -> Unit) {
                         is DietAction.MealClick -> onMealClick(action.mealId)
                     }
                 },
+                isConnected = isConnected,
                 formatNumber = viewModel::formatNumber
             )
         }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PrismFit Health App</string>
+    <string name="app_name">PrismFit</string>
     <string name="home_screen">Home</string>
     <string name="activity_main_screen">Activity</string>
     <string name="pending_activity_screen_walking">Walking</string>
@@ -118,4 +118,8 @@
     <string name="error">Error: %1$s</string>
     <string name="unexpected_error">An unexpected error occurred</string>
     <string name="activities_absence">No activities today</string>
+    <string name="network_error">Network connection error</string>
+    <string name="deletion_error">Failed to delete</string>
+    <string name="save_error">Failed to save</string>
+    <string name="no_internet_connection">No Internet connection</string>
 </resources>

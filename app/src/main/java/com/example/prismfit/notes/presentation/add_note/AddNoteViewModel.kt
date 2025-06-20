@@ -26,6 +26,9 @@ class AddNoteViewModel @Inject constructor(
     private val _exitChannel = Channel<Unit>()
     val exitChannel: ReceiveChannel<Unit> = _exitChannel
 
+    private val _networkErrorMessage = MutableStateFlow<UiText?>(null)
+    val networkErrorMessage: StateFlow<UiText?> = _networkErrorMessage
+
     private var noteId: String? = null
 
     fun initWithId(id: String?) {
@@ -33,12 +36,16 @@ class AddNoteViewModel @Inject constructor(
         noteId = id
         if (id != null) {
             viewModelScope.launch {
-                val note = noteRepository.getNotes().find { it.id == id }
-                note?.let {
-                    _state.value = ScreenState(
-                        inputTitle = it.title,
-                        inputContent = it.content
-                    )
+                try {
+                    val note = noteRepository.getNotes().find { it.id == id }
+                    note?.let {
+                        _state.value = ScreenState(
+                            inputTitle = it.title,
+                            inputContent = it.content
+                        )
+                    }
+                } catch (e: Exception) {
+                    _networkErrorMessage.value = UiText.StringResource(R.string.network_error)
                 }
             }
         }
@@ -56,14 +63,20 @@ class AddNoteViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true, errorMessage = null) }
-            noteRepository.saveNote(
-                NoteInput(
-                    id = noteId,
-                    title = title,
-                    content = content
+            try {
+                noteRepository.saveNote(
+                    NoteInput(
+                        id = noteId,
+                        title = title,
+                        content = content
+                    )
                 )
-            )
-            _exitChannel.send(Unit)
+                _exitChannel.send(Unit)
+            } catch (e: Exception) {
+                _networkErrorMessage.value = UiText.StringResource(R.string.save_error)
+            } finally {
+                _state.update { it.copy(isSaving = false) }
+            }
         }
     }
 
@@ -79,6 +92,10 @@ class AddNoteViewModel @Inject constructor(
 
     fun clearErrorMessage() {
         _state.update { it.copy(errorMessage = null) }
+    }
+
+    fun dismissNetworkError() {
+        _networkErrorMessage.value = null
     }
 
     data class ScreenState(

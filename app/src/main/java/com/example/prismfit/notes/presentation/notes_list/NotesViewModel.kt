@@ -2,6 +2,9 @@ package com.example.prismfit.notes.presentation.notes_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.prismfit.R
+import com.example.prismfit.core.network.NetworkMonitor
+import com.example.prismfit.core.ui.utils.UiText
 import com.example.prismfit.notes.domain.model.Note
 import com.example.prismfit.notes.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _notesFlow = MutableStateFlow<List<Note>>(emptyList())
@@ -27,16 +31,22 @@ class NotesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        getNotes()
-    }
+    private val _networkErrorMessage = MutableStateFlow<UiText?>(null)
+    val networkErrorMessage: StateFlow<UiText?> = _networkErrorMessage
+
+    val isConnected: StateFlow<Boolean> = networkMonitor.isConnected
 
     fun getNotes() {
         viewModelScope.launch {
             _isLoading.value = true
-            _notesFlow.value = noteRepository.getNotes()
-                .sortedByDescending { it.createdAt }
-            _isLoading.value = false
+            try {
+                _notesFlow.value = noteRepository.getNotes()
+                    .sortedByDescending { it.createdAt }
+            } catch (e: Exception) {
+                _networkErrorMessage.value = UiText.StringResource(R.string.network_error)
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -45,18 +55,24 @@ class NotesViewModel @Inject constructor(
     }
 
     fun confirmDelete() {
-        val id = _noteToDelete.value
-        if (id != null) {
-            viewModelScope.launch {
+        val id = _noteToDelete.value ?: return
+        viewModelScope.launch {
+            try {
                 noteRepository.deleteNote(id)
                 _noteToDelete.value = null
                 getNotes()
+            } catch (e: Exception) {
+                _networkErrorMessage.value = UiText.StringResource(R.string.deletion_error)
             }
         }
     }
 
     fun cancelDelete() {
         _noteToDelete.value = null
+    }
+
+    fun dismissNetworkError() {
+        _networkErrorMessage.value = null
     }
 
     fun formatDate(ms: Long?): String {

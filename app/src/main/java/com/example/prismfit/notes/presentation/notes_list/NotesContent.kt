@@ -27,6 +27,7 @@ fun NotesContent(
     notes: List<Note>,
     noteToDelete: String?,
     onAction: (NotesAction) -> Unit,
+    isConnected: Boolean,
     formatDate: (Long?) -> String
 ) {
     LazyColumn(
@@ -66,7 +67,10 @@ fun NotesContent(
             title = { Text(stringResource(R.string.delete_confirmation)) },
             text = { Text(stringResource(R.string.note_delete_confirmation_question)) },
             confirmButton = {
-                TextButton(onClick = { onAction(NotesAction.DeleteConfirm) }) {
+                TextButton(
+                    onClick = { onAction(NotesAction.DeleteConfirm) },
+                    enabled = isConnected
+                ) {
                     Text(stringResource(R.string.yes))
                 }
             },

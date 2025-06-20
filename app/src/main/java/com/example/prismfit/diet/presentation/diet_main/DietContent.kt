@@ -40,6 +40,7 @@ fun DietContent(
     meals: List<Meal>,
     mealToDelete: String?,
     onAction: (DietAction) -> Unit,
+    isConnected: Boolean,
     formatNumber: (Double) -> String
 ) {
 
@@ -224,7 +225,10 @@ fun DietContent(
                 title = { Text(stringResource(R.string.delete_confirmation)) },
                 text = { Text(stringResource(R.string.meal_delete_confirmation_question)) },
                 confirmButton = {
-                    TextButton(onClick = { onAction(DietAction.DeleteConfirm) }) {
+                    TextButton(
+                        onClick = { onAction(DietAction.DeleteConfirm) },
+                        enabled = isConnected
+                    ) {
                         Text(stringResource(R.string.yes))
                     }
                 },

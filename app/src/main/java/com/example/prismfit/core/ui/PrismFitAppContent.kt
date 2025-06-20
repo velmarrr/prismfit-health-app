@@ -2,6 +2,7 @@ package com.example.prismfit.core.ui
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -23,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -73,10 +76,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun PrismFitAppContent(navController: NavHostController) {
+fun PrismFitAppContent(
+    navController: NavHostController,
+    isConnected: Boolean
+) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val titleRes = when (currentBackStackEntry.routeClass()) {
-        HomeRoute::class -> R.string.home_screen
+        HomeRoute::class -> R.string.app_name
         ActivityMainRoute::class -> R.string.activity_main_screen
         PendingActivityRoute::class -> {
             when (currentBackStackEntry?.arguments?.getString("selectedType")?.lowercase()) {
@@ -156,80 +162,100 @@ fun PrismFitAppContent(navController: NavHostController) {
             }
         }
     ) { paddingValues ->
-        CompositionLocalProvider(
-            LocalNavController provides navController
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = HomeGraph,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+            CompositionLocalProvider(
+                LocalNavController provides navController
             ) {
-                navigation<HomeGraph>(startDestination = HomeRoute) {
-                    composable<HomeRoute> { HomeScreen() }
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .zIndex(99f)
+                ) {
+                    NetworkStatusBanner(isConnected)
                 }
-                navigation<ActivityGraph>(startDestination = ActivityMainRoute) {
-                    composable<ActivityMainRoute> {
-                        ActivityMainScreen(
-                            onAction = { action ->
-                                when (action) {
-                                    is ActivityAction.OnStart -> {
-                                        navController.navigate(PendingActivityRoute(action.type.typeName))
-                                    }
-                                    is ActivityAction.OnActivityClick -> {
-                                        val routeJson = Json.encodeToString(action.activity.route.map { it })
-                                        navController.navigate(ActivityMapRoute(routeJson))
+                NavHost(
+                    navController = navController,
+                    startDestination = HomeGraph,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    navigation<HomeGraph>(startDestination = HomeRoute) {
+                        composable<HomeRoute> { HomeScreen() }
+                    }
+                    navigation<ActivityGraph>(startDestination = ActivityMainRoute) {
+                        composable<ActivityMainRoute> {
+                            ActivityMainScreen(
+                                onAction = { action ->
+                                    when (action) {
+                                        is ActivityAction.OnStart -> {
+                                            navController.navigate(PendingActivityRoute(action.type.typeName))
+                                        }
+
+                                        is ActivityAction.OnActivityClick -> {
+                                            val routeJson =
+                                                Json.encodeToString(action.activity.route.map { it })
+                                            navController.navigate(ActivityMapRoute(routeJson))
+                                        }
                                     }
                                 }
-                            }
-                        )
+                            )
+                        }
+                        composable<PendingActivityRoute> { backStackEntry ->
+                            val selectedTypeName =
+                                backStackEntry.arguments?.getString("selectedType")
+                                    ?: "walking"
+                            val selectedType = ActivityType.fromString(selectedTypeName)
+                            val context = LocalContext.current
+                            PendingActivityScreen(
+                                onFinish = {
+                                    val stopIntent =
+                                        Intent(context, LocationService::class.java).apply {
+                                            action = ServiceActions.ACTION_STOP.name
+                                        }
+                                    context.stopService(stopIntent)
+                                    navController.popBackStack()
+                                },
+                                selectedType = selectedType
+                            )
+                        }
+                        composable<ActivityMapRoute> { backStackEntry ->
+                            val routeJson = backStackEntry.arguments?.getString("routeJson") ?: "[]"
+                            val points: List<LatLng> =
+                                Json.decodeFromString<List<Location>>(routeJson)
+                                    .map { it.toLatLng() }
+                            ActivityMapScreen(
+                                route = points
+                            )
+                        }
                     }
-                    composable<PendingActivityRoute> { backStackEntry ->
-                        val selectedTypeName = backStackEntry.arguments?.getString("selectedType")
-                            ?: "walking"
-                        val selectedType = ActivityType.fromString(selectedTypeName)
-                        val context = LocalContext.current
-                        PendingActivityScreen(
-                            onFinish = {
-                                val stopIntent = Intent(context, LocationService::class.java).apply {
-                                    action = ServiceActions.ACTION_STOP.name
+                    navigation<DietGraph>(startDestination = DietRoute) {
+                        composable<DietRoute> {
+                            DietScreen(
+                                onMealClick = { mealId ->
+                                    navController.navigate(EditDietRoute(mealId))
                                 }
-                                context.stopService(stopIntent)
-                                navController.popBackStack()
-                            },
-                            selectedType = selectedType
-                        )
-                    }
-                    composable<ActivityMapRoute> { backStackEntry ->
-                        val routeJson = backStackEntry.arguments?.getString("routeJson") ?: "[]"
-                        val points: List<LatLng> = Json.decodeFromString<List<Location>>(routeJson)
-                            .map { it.toLatLng() }
-                        ActivityMapScreen(
-                            route = points
-                        )
-                    }
-                }
-                navigation<DietGraph>(startDestination = DietRoute) {
-                    composable<DietRoute> { DietScreen(
-                        onMealClick = { mealId ->
-                            navController.navigate(EditDietRoute(mealId))
+                            )
                         }
-                    ) }
-                    composable<AddDietRoute> { AddDietScreen(mealId = null) }
-                    composable<EditDietRoute> { AddDietScreen(mealId = it.arguments?.getString("mealId")) }
-                }
-                navigation<NotesGraph>(startDestination = NotesRoute) {
-                    composable<NotesRoute> { NotesScreen(
-                        onNoteClick = { noteId ->
-                            navController.navigate(EditNoteRoute(noteId))
+                        composable<AddDietRoute> { AddDietScreen(mealId = null) }
+                        composable<EditDietRoute> { AddDietScreen(mealId = it.arguments?.getString("mealId")) }
+                    }
+                    navigation<NotesGraph>(startDestination = NotesRoute) {
+                        composable<NotesRoute> {
+                            NotesScreen(
+                                onNoteClick = { noteId ->
+                                    navController.navigate(EditNoteRoute(noteId))
+                                }
+                            )
                         }
-                    ) }
-                    composable<AddNoteRoute> { AddNoteScreen(noteId = null) }
-                    composable<EditNoteRoute> { AddNoteScreen(noteId = it.arguments?.getString("noteId")) }
-                }
-                navigation<SettingsGraph>(startDestination = SettingsRoute) {
-                    composable<SettingsRoute> { SettingsScreen(navController) }
+                        composable<AddNoteRoute> { AddNoteScreen(noteId = null) }
+                        composable<EditNoteRoute> { AddNoteScreen(noteId = it.arguments?.getString("noteId")) }
+                    }
+                    navigation<SettingsGraph>(startDestination = SettingsRoute) {
+                        composable<SettingsRoute> { SettingsScreen(navController) }
+                    }
                 }
             }
         }
@@ -240,6 +266,9 @@ fun PrismFitAppContent(navController: NavHostController) {
 @Composable
 fun AppPreview() {
     AppTheme(themePreference = ThemePreference.SYSTEM) {
-        PrismFitAppContent(rememberNavController())
+        PrismFitAppContent(
+            rememberNavController(),
+            isConnected = true
+        )
     }
 }
